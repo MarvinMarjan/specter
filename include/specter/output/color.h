@@ -48,7 +48,7 @@ enum ModeIndex
 {
 	reset_all = 0, // ESC[0m - reset color and mode
 
-	normal 		= 0, // ESC[0;{n}m - normal mode
+	normal 		= 0, // ESC[0;...m - normal mode. not using this as first argument will also reset colors
 
 	bold		= 1,	reset_bold		= 22,
 	dim			= 2,	reset_dim		= 22,
@@ -69,6 +69,7 @@ concept Number = std::is_integral<T>::value;
 
 struct RGB
 {
+	RGB() = default;
 	RGB(const uint8_t r, const uint8_t g, const uint8_t b)
 		: red(r), green(g), blue(b) {}
 
@@ -76,7 +77,9 @@ struct RGB
 		: red(all), green(all), blue(all) {}
 
 
-	uint8_t red, green, blue;
+	uint8_t red		= 0;
+	uint8_t green	= 0;
+	uint8_t blue	= 0;
 };
 
 
@@ -111,7 +114,7 @@ inline std::string clr(const std::string& source, const ColorIndex color) noexce
 
 // color and graphic mode
 inline std::string clr(const std::string& source, const ColorIndex color, const ModeIndex mode) noexcept {
-	return clr(source, {color, mode});
+	return clr(source, {mode, color});
 }
 
 
@@ -123,7 +126,7 @@ inline std::string clr(const std::string& source, const ColorIndex foreground, c
 
 // foreground and background color with graphic mode
 inline std::string clr(const std::string& source, const ColorIndex foreground, const ColorIndex background, const ModeIndex mode) noexcept {
-	return clr(source, {foreground, background, mode});
+	return clr(source, {mode, foreground, background});
 }
 
 
@@ -135,7 +138,7 @@ inline std::string clr(const std::string& source, const int id) {
 
 
 inline std::string clr(const std::string& source, const int id, const ModeIndex mode) {
-	return clr(source, {fg_custom, 5, id, mode});
+	return clr(source, {mode, fg_custom, 5, id});
 }
 
 
@@ -145,7 +148,7 @@ inline std::string clr(const std::string& source, const int foreground, const in
 
 
 inline std::string clr(const std::string& source, const int foreground, const int background, const ModeIndex mode) {
-	return clr(source, {fg_custom, 5, foreground, bg_custom, 5, background, mode});
+	return clr(source, {mode, fg_custom, 5, foreground, bg_custom, 5, background});
 }
 
 
@@ -157,7 +160,7 @@ inline std::string clr(const std::string& source, const RGB& color) noexcept {
 
 
 inline std::string clr(const std::string& source, const RGB& color, const ModeIndex mode) noexcept {
-	return clr(source, {fg_custom, 2, color.red, color.green, color.blue, mode});
+	return clr(source, {mode, fg_custom, 2, color.red, color.green, color.blue});
 }
 
 
@@ -168,8 +171,8 @@ inline std::string clr(const std::string& source, const RGB& foreground, const R
 
 
 inline std::string clr(const std::string& source, const RGB& foreground, const RGB& background, const ModeIndex mode) noexcept {
-	return clr(source, {fg_custom, 2,	foreground.red, foreground.green, foreground.blue,
-						bg_custom, 2,	background.red, background.green, background.blue, mode});
+	return clr(source, {mode, fg_custom, 2,	foreground.red, foreground.green, foreground.blue,
+						bg_custom, 2,	background.red, background.green, background.blue});
 }
 
 
