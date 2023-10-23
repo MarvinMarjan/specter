@@ -7,6 +7,7 @@
 SPECTER_NAMESPACE_BEGIN
 
 
+// stores coloring information as objects
 class ColorObject
 {
 public:
@@ -14,6 +15,7 @@ public:
 	ColorObject(const ModeIndex mode);
 
 
+	// paint "source" with this color
 	virtual std::string paint(const std::string& source) noexcept = 0;
 
 
@@ -23,6 +25,7 @@ public:
 
 
 
+// color object for 16 colors (ColorIndex)
 class Color16Object : public ColorObject
 {
 public:
@@ -42,6 +45,7 @@ public:
 
 
 
+// color object for 8-bit colors
 class Color256Object : public ColorObject
 {
 public:
@@ -61,6 +65,7 @@ public:
 
 
 
+// color object for RGB colors
 class ColorRGBObject : public ColorObject
 {
 public:
