@@ -74,14 +74,14 @@ concept ValidColorType = Number<T> || std::same_as<T, RGB>;
 
 
 
-// template <ValidColorType _ColorTy>
-// struct ColorStruct
-// {
-// 	_ColorTy foreground;
-// 	_ColorTy background;
+template <ValidColorType _ColorTy>
+struct ColorStruct
+{
+	_ColorTy foreground;
+	_ColorTy background;
 
-// 	ModeIndex mode;
-// };
+	ModeIndex mode;
+};
 
 
 
@@ -249,6 +249,42 @@ inline std::string clr(const RGB& foreground, const RGB& background, const ModeI
 	return clr({mode, 	fg_custom, 2,	foreground.red, foreground.green, foreground.blue,
 						bg_custom, 2,	background.red, background.green, background.blue});
 }
+
+
+
+inline std::string black		(const std::string& source)	noexcept { return clr(source, fg_black); }
+inline std::string red			(const std::string& source)	noexcept { return clr(source, fg_red); }
+inline std::string green		(const std::string& source)	noexcept { return clr(source, fg_green); }
+inline std::string yellow		(const std::string& source)	noexcept { return clr(source, fg_yellow); }
+inline std::string blue			(const std::string& source)	noexcept { return clr(source, fg_blue); }
+inline std::string magenta		(const std::string& source)	noexcept { return clr(source, fg_magenta); }
+inline std::string cyan			(const std::string& source)	noexcept { return clr(source, fg_cyan); }
+inline std::string white		(const std::string& source)	noexcept { return clr(source, fg_white); }
+inline std::string bblack		(const std::string& source)	noexcept { return clr(source, fg_bblack); }
+inline std::string bred			(const std::string& source)	noexcept { return clr(source, fg_bred); }
+inline std::string bgreen		(const std::string& source)	noexcept { return clr(source, fg_bgreen); }
+inline std::string byellow		(const std::string& source)	noexcept { return clr(source, fg_byellow); }
+inline std::string bblue		(const std::string& source)	noexcept { return clr(source, fg_bblue); }
+inline std::string bmagenta		(const std::string& source)	noexcept { return clr(source, fg_bmagenta); }
+inline std::string bcyan		(const std::string& source)	noexcept { return clr(source, fg_bcyan); }
+inline std::string bwhite		(const std::string& source)	noexcept { return clr(source, fg_bwhite); }
+
+inline std::string bgblack		(const std::string& source)	noexcept { return clr(source, bg_black); }
+inline std::string bgred		(const std::string& source)	noexcept { return clr(source, bg_red); }
+inline std::string bggreen		(const std::string& source)	noexcept { return clr(source, bg_green); }
+inline std::string bgyellow		(const std::string& source)	noexcept { return clr(source, bg_yellow); }
+inline std::string bgblue		(const std::string& source)	noexcept { return clr(source, bg_blue); }
+inline std::string bgmagenta	(const std::string& source)	noexcept { return clr(source, bg_magenta); }
+inline std::string bgcyan		(const std::string& source)	noexcept { return clr(source, bg_cyan); }
+inline std::string bgwhite		(const std::string& source)	noexcept { return clr(source, bg_white); }
+inline std::string bgbblack		(const std::string& source)	noexcept { return clr(source, bg_bblack); }
+inline std::string bgbred		(const std::string& source)	noexcept { return clr(source, bg_bred); }
+inline std::string bgbgreen		(const std::string& source)	noexcept { return clr(source, bg_bgreen); }
+inline std::string bgbyellow	(const std::string& source)	noexcept { return clr(source, bg_byellow); }
+inline std::string bgbblue		(const std::string& source)	noexcept { return clr(source, bg_bblue); }
+inline std::string bgbmagenta	(const std::string& source)	noexcept { return clr(source, bg_bmagenta); }
+inline std::string bgbcyan		(const std::string& source)	noexcept { return clr(source, bg_bcyan); }
+inline std::string bgbwhite		(const std::string& source)	noexcept { return clr(source, bg_bwhite); }
 
 
 SPECTER_NAMESPACE_END
