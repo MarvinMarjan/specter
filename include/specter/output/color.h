@@ -227,7 +227,7 @@ inline std::string clr(const std::string& source, const RGB& foreground, const R
 
 
 
-inline std::string clr(const std::string& source, const RGB& foreground, const RGB& background) noexcept
+inline std::string clr(const RGB& foreground, const RGB& background) noexcept
 {
 	return clr({fg_custom, 2,	foreground.red, foreground.green, foreground.blue,
 				bg_custom, 2,	background.red, background.green, background.blue});
@@ -244,7 +244,7 @@ inline std::string clr(const std::string& source, const RGB& foreground, const R
 
 
 
-inline std::string clr(const std::string& source, const RGB& foreground, const RGB& background, const ModeIndex mode) noexcept
+inline std::string clr(const RGB& foreground, const RGB& background, const ModeIndex mode) noexcept
 {
 	return clr({mode, 	fg_custom, 2,	foreground.red, foreground.green, foreground.blue,
 						bg_custom, 2,	background.red, background.green, background.blue});
