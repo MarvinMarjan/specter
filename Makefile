@@ -2,6 +2,8 @@ BUILD_PATH = build
 DEBUG_PATH = $(BUILD_PATH)/debug
 RELEASE_PATH = $(BUILD_PATH)/release
 
+LIB_PATH = lib
+
 
 
 # define RELEASE to build with release configuration, debug will be used otherwise
@@ -19,14 +21,16 @@ endif
 
 
 CC = g++
-CVERSION = c++23
+CVERSION = c++20
 
 OUT_NAME = lib$(LIB_NAME).a
 
-OUT_LIB = $(OUT_PATH)/$(OUT_NAME)
+OUT_LIB = $(LIB_PATH)/$(OUT_NAME)
 
 TEST_PATH = test
 TEST_FILE = $(TEST_PATH)/main.cpp
+TEST_APP_NAME = test
+TEST_APP_PATH = $(TEST_PATH)/$(TEST_APP_NAME)
 
 
 INCLUDE_PATH = ./include
@@ -40,14 +44,18 @@ FULL_OBJECTS = $(addprefix $(OUT_PATH)/, $(notdir $(OBJECTS)))
 
 
 
-# runc: $(OUT_LIB)
-# 	@ echo Running...
-# 	@ $(OUT_LIB)
+.PHONY:
+test: $(TEST_APP_PATH)
+	@ echo Running test...
+	@ echo
+	@ $(TEST_APP_PATH)
 
 
-# run:
-# 	@ echo Running;
-# 	@ $(OUT_LIB)
+
+$(TEST_APP_PATH): $(TEST_FILE) $(OUT_LIB)
+	@ echo Compiling test with library $(LIB_NAME)
+	@ $(CC) $< -o $(TEST_APP_PATH) -I$(INCLUDE_PATH) -L$(LIB_PATH) -l$(LIB_NAME) --std=$(CVERSION)
+
 
 
 # links object files into a executable
@@ -63,7 +71,7 @@ $(OUT_LIB) build: $(OBJECTS)
 # compiles source files into objects
 $(OBJECTS): %.o: %.cpp
 	@ echo Compiling $<
-	@ g++ -c $< -o $(addprefix $(OUT_PATH)/, $(notdir $@)) $(OPTIMIZATION) -I $(INCLUDE_PATH) --std=$(CVERSION)
+	@ $(CC) -c $< -o $(addprefix $(OUT_PATH)/, $(notdir $@)) $(OPTIMIZATION) -I $(INCLUDE_PATH) --std=$(CVERSION)
 
 
 
