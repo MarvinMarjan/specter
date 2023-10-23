@@ -1,6 +1,7 @@
 #pragma once
 
 #include <concepts>
+#include <cstdint>
 
 #include <specter/output/escape.h>
 
@@ -15,7 +16,7 @@ enum ColorIndex
 	reset_color = 0, // reset color only
 
 
-	// foreground
+	// normal
 
 	fg_black	= 30,	bg_black	= 40,
 	fg_red 		= 31,	bg_red		= 41,
@@ -25,10 +26,11 @@ enum ColorIndex
 	fg_magenta	= 35,	bg_magenta	= 45,
 	fg_cyan		= 36,	bg_cyan		= 46,
 	fg_white	= 37,	bg_white	= 47,
+	fg_custom	= 38,	bg_custom	= 48,
 	fg_default	= 39,	bg_default	= 49,
 
 
-	// background
+	// bright
 
 	fg_bblack	= 90, 	bg_bblack	= 100,
 	fg_bred 	= 91,	bg_bred		= 101,
@@ -64,14 +66,30 @@ template <typename T>
 concept Number = std::is_integral<T>::value;
 
 
+
+struct RGB
+{
+	RGB(const uint8_t r, const uint8_t g, const uint8_t b)
+		: red(r), green(g), blue(b) {}
+
+	RGB(const uint8_t all)
+		: red(all), green(all), blue(all) {}
+
+
+	uint8_t red, green, blue;
+};
+
+
+
+
 template <Number _NumTy>
 inline std::string str(const _NumTy number) noexcept {
 	return std::to_string(number);
 }
 
 
-const std::string RESET_ALL = HEX_ESC_CSI + "0m";
 
+const std::string RESET_ALL = HEX_ESC_CSI + "0m";
 
 
 
@@ -79,34 +97,80 @@ std::string clr(const std::string& source, const std::initializer_list<int>& cod
 
 
 
-// // graphic mode
-// inline std::string clr(const std::string& source, const ModeIndex mode) noexcept {
-// 	return clr(source, {(int)mode});
-// }
+// graphic mode
+inline std::string clr(const std::string& source, const ModeIndex mode) noexcept {
+	return clr(source, {mode});
+}
 
 
-// // color
-// inline std::string clr(const std::string& source, const ColorIndex color) noexcept {
-// 	return clr(source, {(int)color});
-// }
+// color
+inline std::string clr(const std::string& source, const ColorIndex color) noexcept {
+	return clr(source, {color});
+}
 
 
-// // color and graphic mode
-// inline std::string clr(const std::string& source, const ColorIndex color, const ModeIndex mode) noexcept {
-// 	return clr(source, {(int)})
-// }
+// color and graphic mode
+inline std::string clr(const std::string& source, const ColorIndex color, const ModeIndex mode) noexcept {
+	return clr(source, {color, mode});
+}
 
 
-// // foreground and background color
-// inline std::string clr(const std::string& source, const ColorIndex foreground, const ColorIndex background) noexcept {
+// foreground and background color
+inline std::string clr(const std::string& source, const ColorIndex foreground, const ColorIndex background) noexcept {
+	return clr(source, {foreground, background});
+}
 
-// }
+
+// foreground and background color with graphic mode
+inline std::string clr(const std::string& source, const ColorIndex foreground, const ColorIndex background, const ModeIndex mode) noexcept {
+	return clr(source, {foreground, background, mode});
+}
 
 
-// // foreground and background color with graphic mode
-// inline std::string clr(const std::string& source, const ColorIndex foreground, const ColorIndex background, const ModeIndex mode) noexcept {
 
-// }
+
+inline std::string clr(const std::string& source, const int id) {
+	return clr(source, {fg_custom, 5, id});
+}
+
+
+inline std::string clr(const std::string& source, const int id, const ModeIndex mode) {
+	return clr(source, {fg_custom, 5, id, mode});
+}
+
+
+inline std::string clr(const std::string& source, const int foreground, const int background) {
+	return clr(source, {fg_custom, 5, foreground, bg_custom, 5, background});
+}
+
+
+inline std::string clr(const std::string& source, const int foreground, const int background, const ModeIndex mode) {
+	return clr(source, {fg_custom, 5, foreground, bg_custom, 5, background, mode});
+}
+
+
+
+
+inline std::string clr(const std::string& source, const RGB& color) noexcept {
+	return clr(source, {fg_custom, 2, color.red, color.green, color.blue});
+}
+
+
+inline std::string clr(const std::string& source, const RGB& color, const ModeIndex mode) noexcept {
+	return clr(source, {fg_custom, 2, color.red, color.green, color.blue, mode});
+}
+
+
+inline std::string clr(const std::string& source, const RGB& foreground, const RGB& background) noexcept {
+	return clr(source, {fg_custom, 2,	foreground.red, foreground.green, foreground.blue,
+						bg_custom, 2,	background.red, background.green, background.blue});
+}
+
+
+inline std::string clr(const std::string& source, const RGB& foreground, const RGB& background, const ModeIndex mode) noexcept {
+	return clr(source, {fg_custom, 2,	foreground.red, foreground.green, foreground.blue,
+						bg_custom, 2,	background.red, background.green, background.blue, mode});
+}
 
 
 SPECTER_NAMESPACE_END
