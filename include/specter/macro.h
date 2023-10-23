@@ -1,0 +1,6 @@
+#pragma once
+
+#define SPECTER_NAMESPACE 		sp
+
+#define SPECTER_NAMESPACE_BEGIN	namespace SPECTER_NAMESPACE {
+#define SPECTER_NAMESPACE_END	}
