@@ -10,6 +10,7 @@ SPECTER_NAMESPACE_BEGIN
 class ColorShortcut
 {
 public:
+	ColorShortcut() = default;
 	ColorShortcut(const ColorObject* const color);
 
 
