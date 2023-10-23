@@ -16,7 +16,7 @@ public:
 
 
 	// paint "source" with this color
-	virtual std::string paint(const std::string& source) noexcept = 0;
+	virtual std::string paint(const std::string& source) const noexcept = 0;
 
 
 	ModeIndex mode = normal;
@@ -36,7 +36,7 @@ public:
 	Color16Object(const ColorIndex foreground, const ColorIndex background, const ModeIndex mode);
 
 
-	std::string paint(const std::string& source) noexcept override { return clr(source, foreground, background, mode); }
+	std::string paint(const std::string& source) const noexcept override { return clr(source, foreground, background, mode); }
 
 
 	ColorIndex foreground = fg_default;
@@ -56,7 +56,7 @@ public:
 	Color256Object(const int foreground, const int background, const ModeIndex mode);
 
 
-	std::string paint(const std::string& source) noexcept override { return clr(source, foreground, background, mode); }
+	std::string paint(const std::string& source) const noexcept override { return clr(source, foreground, background, mode); }
 
 
 	int foreground = 0;
@@ -76,7 +76,7 @@ public:
 	ColorRGBObject(const RGB& foreground, const RGB& background, const ModeIndex mode);
 
 
-	std::string paint(const std::string& source) noexcept override { return clr(source, foreground, background, mode); }
+	std::string paint(const std::string& source) const noexcept override { return clr(source, foreground, background, mode); }
 
 
 	RGB foreground;
