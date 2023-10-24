@@ -45,7 +45,14 @@ FULL_OBJECTS = $(addprefix $(OUT_PATH)/, $(notdir $(OBJECTS)))
 
 
 .PHONY:
-test: $(TEST_APP_PATH)
+testc: $(TEST_APP_PATH)
+	@ echo Running test...
+	@ echo
+	@ $(TEST_APP_PATH)
+
+
+.PHONY:
+run:
 	@ echo Running test...
 	@ echo
 	@ $(TEST_APP_PATH)
