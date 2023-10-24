@@ -11,10 +11,11 @@ class ColorShortcut
 {
 public:
 	ColorShortcut() = default;
-	ColorShortcut(const ColorString& color);
+	ColorShortcut(const ColorString& color) : color_(color) {}
 
 
-	std::string operator()(const std::string& src) const noexcept;
+	std::string operator()(const std::string& source) const noexcept {	return color_.paint(source); }
+	std::string operator*() const noexcept { return color_.get(); }
 
 
 	ColorString color() const noexcept { return color_; }
