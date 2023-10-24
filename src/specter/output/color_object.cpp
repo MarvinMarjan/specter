@@ -86,6 +86,11 @@ SPECTER_NAMESPACE ColorString::ColorString(const ColorRGBStruct &color)
 
 
 
+SPECTER_NAMESPACE ColorString::ColorString(const ModeIndex mode)
+	: str_color_(clr(mode)) {}
+
+
+
 SPECTER_NAMESPACE ColorString::ColorString(const ColorIndex color)
 	: ColorString(Color16Struct(color)) {}
 

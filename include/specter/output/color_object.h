@@ -102,6 +102,8 @@ public:
 	ColorString(const Color256Struct& color);
 	ColorString(const ColorRGBStruct& color);
 
+	ColorString(const ModeIndex mode);
+
 	ColorString(const ColorIndex color);
 	ColorString(const ColorIndex color, const ModeIndex mode);
 	ColorString(const ColorIndex foreground, const ColorIndex background);
