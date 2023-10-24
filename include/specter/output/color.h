@@ -1,8 +1,8 @@
 #pragma once
 
-#include <concepts>
 #include <cstdint>
 
+#include <specter/string.h>
 #include <specter/output/escape.h>
 
 
@@ -76,19 +76,6 @@ struct RGB
 	uint8_t green	= 0;
 	uint8_t blue	= 0;
 };
-
-
-
-// T is a number?
-template <typename T>
-concept Number = std::is_integral<T>::value || std::convertible_to<T, int>;
-
-
-
-template <Number _NumTy>
-inline std::string str(const _NumTy number) noexcept {
-	return std::to_string(number);
-}
 
 
 
