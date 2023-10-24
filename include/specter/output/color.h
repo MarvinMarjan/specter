@@ -66,7 +66,7 @@ struct RGB;
 
 // T is a number?
 template <typename T>
-concept Number = std::is_integral<T>::value;
+concept Number = std::is_integral<T>::value || std::convertible_to<T, int>;
 
 
 template <typename T>
@@ -80,8 +80,14 @@ struct ColorStruct
 	_ColorTy foreground;
 	_ColorTy background;
 
-	ModeIndex mode;
+	ModeIndex mode = normal;
 };
+
+
+
+using Color16Struct = ColorStruct<ColorIndex>;
+using Color256Struct = ColorStruct<int>;
+using ColorRGBStruct = ColorStruct<RGB>;
 
 
 
@@ -249,6 +255,37 @@ inline std::string clr(const RGB& foreground, const RGB& background, const ModeI
 	return clr({mode, 	fg_custom, 2,	foreground.red, foreground.green, foreground.blue,
 						bg_custom, 2,	background.red, background.green, background.blue});
 }
+
+
+
+
+inline std::string clr(const std::string& source, const Color16Struct& color) noexcept
+{ return clr(source, color.foreground, color.background, color.mode); }
+
+inline std::string clr(const Color16Struct& color) noexcept
+{ return clr(color.foreground, color.background, color.mode); }
+
+
+
+
+inline std::string clr(const std::string& source, const Color256Struct& color) noexcept
+{ return clr(source, color.foreground, color.background, color.mode); }
+
+inline std::string clr(const Color256Struct& color) noexcept
+{ return clr(color.foreground, color.background, color.mode); }
+
+
+
+
+inline std::string clr(const std::string& source, const ColorRGBStruct& color) noexcept
+{ return clr(source, color.foreground, color.background, color.mode); }
+
+inline std::string clr(const ColorRGBStruct& color) noexcept
+{ return clr(color.foreground, color.background, color.mode); }
+
+
+
+
 
 
 
