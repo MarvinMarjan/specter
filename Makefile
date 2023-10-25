@@ -36,6 +36,8 @@ TEST_APP_PATH = $(TEST_PATH)/$(TEST_APP_NAME)
 INCLUDE_PATH = ./include
 
 
+TEST_LIBS = -lspecter -lncurses -ltinfo
+
 
 SOURCES = $(shell find src -name "*.cpp")
 OBJECTS = $(SOURCES:.cpp=.o)
@@ -61,7 +63,7 @@ run:
 
 $(TEST_APP_PATH): $(TEST_FILE) $(OUT_LIB)
 	@ echo Compiling test with library $(LIB_NAME)
-	@ $(CC) $< -o $(TEST_APP_PATH) -I$(INCLUDE_PATH) -L$(LIB_PATH) -l$(LIB_NAME) --std=$(CVERSION)
+	@ $(CC) $< -o $(TEST_APP_PATH) -I$(INCLUDE_PATH) -L$(LIB_PATH) $(TEST_LIBS) --std=$(CVERSION)
 
 
 
