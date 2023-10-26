@@ -12,6 +12,7 @@ concept ValidColorType = Number<T> || std::same_as<T, RGB>;
 
 
 
+// stores the foreground color, background color and a mode 
 template <ValidColorType _ColorTy>
 struct ColorStruct
 {	

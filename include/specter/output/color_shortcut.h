@@ -14,7 +14,7 @@ public:
 	ColorShortcut(const ColorString& color) : color_(color) {}
 
 
-	std::string operator()(const std::string& source) const noexcept {	return color_.paint(source); }
+	std::string operator()(const std::string& source) const noexcept { return color_.paint(source); }
 	std::string operator*() const noexcept { return color_.get(); }
 
 
