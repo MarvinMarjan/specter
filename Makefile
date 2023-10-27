@@ -36,7 +36,7 @@ TEST_APP_PATH = $(TEST_PATH)/$(TEST_APP_NAME)
 INCLUDE_PATH = ./include
 
 
-TEST_LIBS = -lspecter -lncurses -ltinfo
+TEST_LIBS = -lspecter_d -ltinfo
 
 
 SOURCES = $(shell find src -name "*.cpp")
