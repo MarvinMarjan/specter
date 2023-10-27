@@ -199,6 +199,7 @@ public:
 	Cursor() = default;
 
 
+	// draw this cursor into a string
 	void draw(std::string& source) noexcept;
 
 
@@ -207,12 +208,15 @@ public:
 };
 
 
+
+// terminal input streaming object
 class Istream
 {
 public:
 	Istream() = default;
 
 
+	// start reading input
 	virtual std::string read() = 0;
 
 
@@ -228,6 +232,7 @@ protected:
 
 
 
+// standard implementation of Istream interface
 class StdIstream : public Istream
 {
 public:
@@ -235,6 +240,7 @@ public:
 
 
 	std::string read() override;
+
 
 private:
 
