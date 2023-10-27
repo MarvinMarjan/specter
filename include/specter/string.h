@@ -22,4 +22,9 @@ inline std::string str(const _NumTy number) noexcept {
 }
 
 
+inline std::string chstr(const char ch) noexcept {
+	return std::string(1, ch);
+}
+
+
 SPECTER_NAMESPACE_END
