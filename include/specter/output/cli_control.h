@@ -99,4 +99,14 @@ inline std::string erase_screen(const EraseMode mode) noexcept {
 }
 
 
+
+inline std::string hide_cursor() noexcept {
+	return HEX_ESC_CSI + "?25l";
+}
+
+inline std::string show_cursor() noexcept {
+	return HEX_ESC_CSI + "?25h";
+}
+
+
 SPECTER_NAMESPACE_END
