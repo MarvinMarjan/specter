@@ -7,18 +7,26 @@
 
 
 
-void SPECTER_NAMESPACE Cursor::draw(std::string& source) noexcept
+void SPECTER_NAMESPACE Cursor::draw(std::string& source) const noexcept
 {
-	for (size_t i = 0; i < source.size(); i++)
+	// check if cursor index is beyond source last character
+	if (pos.index >= source.size())
 	{
-		if (pos.index != i)
-			continue;
-
-		if (i + 1 < source.size())
-			source.insert(i + 1, style.color_end);
-	
-		source.insert(i, style.color_start);
+		draw_at_end(source);
+		return;
 	}
+
+	// draw the cursor
+	source.insert(pos.index + 1, style.color_end);
+	source.insert(pos.index, style.color_start);
+}
+
+
+void SPECTER_NAMESPACE Cursor::draw_at_end(std::string& source) const noexcept
+{
+	source += style.color_start;
+	source += style.at_end;
+	source += style.color_end;
 }
 
 
@@ -31,12 +39,13 @@ SPECTER_NAMESPACE StdIstream::StdIstream()
 }
 
 
+
 std::string SPECTER_NAMESPACE StdIstream::read()
 {
 	// necessary to allow character input without the need of pressing "enter".
-	enable_continuous_chinput();
+	enable_continuous_input();
 
-	// save the current cursor pos
+	// save the current cursor pos and it
 	print(save_cursor_pos(), hide_cursor());
 
 	// clear previous data
@@ -61,9 +70,8 @@ std::string SPECTER_NAMESPACE StdIstream::read()
 		// update the cursor limit to the input size
 		m_cursor.pos.limit = m_data.size();
 
-		// loads the saved cursor pos
-		print(load_cursor_pos());
-		print(erase_screen(FromCursorToEnd));
+		// loads the saved cursor pos and update the screen
+		clear_input();
 
 		// prints the data
 		print(format());
@@ -75,6 +83,7 @@ std::string SPECTER_NAMESPACE StdIstream::read()
 
 	return m_data;
 }
+
 
 
 bool SPECTER_NAMESPACE StdIstream::process(const char ch) noexcept
@@ -107,6 +116,7 @@ bool SPECTER_NAMESPACE StdIstream::process(const char ch) noexcept
 }
 
 
+
 void SPECTER_NAMESPACE StdIstream::process_sub(const char ch) noexcept
 {
 	switch ((int)ch)
@@ -136,4 +146,12 @@ std::string SPECTER_NAMESPACE StdIstream::format() noexcept
 	m_cursor.draw(formatted);
 	
 	return formatted;
+}
+
+
+
+void SPECTER_NAMESPACE StdIstream::clear_input() noexcept
+{
+	print(load_cursor_pos());
+	print(erase_screen(FromCursorToEnd));
 }

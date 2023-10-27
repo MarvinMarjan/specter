@@ -200,11 +200,14 @@ public:
 
 
 	// draw this cursor into a string
-	void draw(std::string& source) noexcept;
+	void draw(std::string& source) const noexcept;
 
 
 	CursorPos pos;
 	CursorStyle style;
+
+private:
+	void draw_at_end(std::string& source) const noexcept;
 };
 
 
@@ -224,7 +227,8 @@ protected:
 	virtual bool process(const char ch) noexcept = 0;
 	virtual void process_sub(const char ch) noexcept = 0;
 
-	virtual std::string format() noexcept = 0;
+	virtual std::string format() noexcept = 0;;
+
 
 	std::string m_data;
 	Cursor m_cursor;
@@ -252,6 +256,9 @@ private:
 
 	// return the current input data to be printed to the screen
 	std::string format() noexcept override;
+
+
+	static void clear_input() noexcept;
 };
 
 

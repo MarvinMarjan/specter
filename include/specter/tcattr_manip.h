@@ -53,7 +53,7 @@ inline static void set_default_stdin_tcattr() noexcept
 // enables the continuous character input.
 // the character pressed will be emited immediately,
 // no need to press "enter"
-inline static void enable_continuous_chinput() noexcept
+inline static void enable_continuous_input() noexcept
 {
 	termios tcattr = get_tcattr(STDIN_FILENO);			// get the current stdin attributes
 	rmv_tcflag_value(tcattr.c_lflag, ICANON | ECHO);	// remove the necessary attributes
