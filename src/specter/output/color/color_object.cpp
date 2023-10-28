@@ -1,4 +1,4 @@
-#include <specter/output/color_object.h>
+#include <specter/output/color/color_object.h>
 
 
 

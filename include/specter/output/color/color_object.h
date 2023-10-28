@@ -1,7 +1,7 @@
 #pragma once
 
-#include <specter/output/color.h>
-#include <specter/output/color_struct.h>
+#include <specter/output/color/color.h>
+#include <specter/output/color/color_struct.h>
 
 
 

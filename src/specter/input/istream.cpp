@@ -1,6 +1,6 @@
 #include <specter/input/istream.h>
 
-#include <specter/output/color.h>
+#include <specter/output/color/color.h>
 #include <specter/output/ostream.h>
 #include <specter/output/cli_control.h>
 #include <specter/tcattr_manip.h>

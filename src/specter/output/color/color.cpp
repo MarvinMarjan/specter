@@ -1,4 +1,4 @@
-#include <specter/output/color.h>
+#include <specter/output/color/color.h>
 
 #include <sstream>
 
