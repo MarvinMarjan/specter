@@ -9,29 +9,64 @@
 SPECTER_NAMESPACE_BEGIN
 
 
-struct PainterToken
-{
-	std::string str;
-};
-
-
 class PaintingRule;
+class Cursor;
+
 
 class Painter
 {
 public:
-	Painter() = default;
+	using RuleList = std::vector<PaintingRule>;
+
+
+	Painter(const Cursor* cursor = nullptr);
 
 
 	std::string paint(const std::string& source);
 
 
 	void add_rule(const PaintingRule& constraint) noexcept { rules_.push_back(constraint); }
+	void remove_all() noexcept { rules_.clear(); }
+
+
+	RuleList		rules()		const noexcept { return rules_; }
+	const Cursor*	cursor()	const noexcept { return cursor_; }
+
+	void set_cursor(const Cursor* cursor)	noexcept { cursor_ = cursor; }
 
 
 private:
-	std::vector<PaintingRule> rules_;
+	friend class PaintingRule;
+
+
+	struct MatchData
+	{
+		MatchData(std::string& token, const Cursor* cursor, const size_t& begin, const size_t& end)
+			: token(token), cursor(cursor), begin(begin), end(end) {}
+
+
+		std::string& token;		// token
+		std::string raw_token;	// raw token (modifications are held locally; copy value)
+
+		// a cursor pointer. necessary if you want to have a cursor drawn and 
+		// a painting of Painter object in the same string without getting conflicts
+		// or an weird result
+		const Cursor* cursor;
+
+		const size_t& begin;
+		const size_t& end;
+
+		bool cursor_drawed = false;
+		bool last_rule = false;
+		bool last_token = false;
+	};
+
+
+	RuleList rules_;
+
+	const Cursor* cursor_;
 };
+
 
 
 class PaintingRule
@@ -52,11 +87,15 @@ private:
 	friend class Painter;
 
 
-	bool match(std::string& str) const noexcept;
+	bool match(Painter::MatchData& data) const noexcept;
+
+	void paint_and_draw_cursor(std::stringstream& stream, Painter::MatchData& data) const noexcept;
+
+
+	static bool cursor_in_token(const Painter::MatchData& data) noexcept;
 
 
 	std::string matcher_;
-
 	ColorString color_;
 };
 

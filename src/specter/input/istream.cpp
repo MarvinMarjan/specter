@@ -22,11 +22,30 @@ void SPECTER_NAMESPACE Cursor::draw(std::string& source) const noexcept
 }
 
 
-void SPECTER_NAMESPACE Cursor::draw_at_end(std::string& source) const noexcept
+void SPECTER_NAMESPACE Cursor::draw(std::string& source, const size_t index) const noexcept
 {
-	source += style.color;
-	source += style.at_end;
-	source += RESET_ALL;
+	// check if cursor index is beyond source last character
+	if (index >= source.size())
+	{
+		draw_at_end(source);
+		return;
+	}
+
+	// draw the cursor
+	source.insert(index + 1, RESET_ALL);
+	source.insert(index, style.color);
+}
+
+
+std::string SPECTER_NAMESPACE Cursor::at_end() const noexcept
+{
+	std::string at_end_str = "";
+	
+	at_end_str += style.color;
+	at_end_str += style.at_end;
+	at_end_str += RESET_ALL;
+
+	return at_end_str;
 }
 
 
