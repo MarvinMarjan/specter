@@ -17,24 +17,23 @@ void SPECTER_NAMESPACE Cursor::draw(std::string& source) const noexcept
 	}
 
 	// draw the cursor
-	source.insert(pos.index + 1, style.color_end);
-	source.insert(pos.index, style.color_start);
+	source.insert(pos.index + 1, RESET_ALL);
+	source.insert(pos.index, style.color);
 }
 
 
 void SPECTER_NAMESPACE Cursor::draw_at_end(std::string& source) const noexcept
 {
-	source += style.color_start;
+	source += style.color;
 	source += style.at_end;
-	source += style.color_end;
+	source += RESET_ALL;
 }
 
 
 
 SPECTER_NAMESPACE StdIstream::StdIstream()
 {
-	m_cursor.style.color_start = clr(142, underline);
-	m_cursor.style.color_end = RESET_ALL;
+	m_cursor.style.color = clr(142, underline);
 	m_cursor.style.at_end = "_";
 }
 

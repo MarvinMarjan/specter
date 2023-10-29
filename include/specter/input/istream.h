@@ -187,8 +187,7 @@ public:
 
 struct CursorStyle
 {
-	std::string color_start;
-	std::string color_end;
+	std::string color;
 	std::string at_end;
 };
 
@@ -200,14 +199,13 @@ public:
 
 
 	// draw this cursor into a string
-	void draw(std::string& source) const noexcept;
+	void draw(std::string& source)			const noexcept;
+	void draw_at_end(std::string& source)	const noexcept;
 
 
 	CursorPos pos;
 	CursorStyle style;
 
-private:
-	void draw_at_end(std::string& source) const noexcept;
 };
 
 
