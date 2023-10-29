@@ -97,6 +97,8 @@ public:
 class ColorString
 {
 public:
+	ColorString() = default;
+
 	ColorString(const ColorObject& color);
 	ColorString(const Color16Struct& color);
 	ColorString(const Color256Struct& color);

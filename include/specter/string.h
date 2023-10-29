@@ -27,4 +27,28 @@ inline std::string chstr(const char ch) noexcept {
 }
 
 
+
+
+inline bool is_blank(const char ch) noexcept {
+	return (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r');
+}
+
+
+inline bool is_alpha(const char ch) noexcept {
+	return 	(ch >= 'A' && ch <= 'Z') || 
+			(ch >= 'a' && ch <= 'z') ||
+			ch == '_';
+}
+
+
+inline bool is_number(const char ch) noexcept {
+	return (ch >= '0' && ch <= '9');
+}
+
+
+inline bool is_alphanum(const char ch) noexcept {
+	return is_alpha(ch) || is_number(ch);
+}
+
+
 SPECTER_NAMESPACE_END
