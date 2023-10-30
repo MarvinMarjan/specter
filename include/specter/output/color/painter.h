@@ -16,17 +16,18 @@ class Cursor;
 class Painter
 {
 public:
-	using RuleList = std::vector<PaintingRule>;
+	using RuleList = std::vector<const PaintingRule*>;
 
 
 	Painter(const Cursor* cursor = nullptr);
+	~Painter();
 
 
 	// paints a source using PaintingRules
 	std::string paint(const std::string& source);
 
 
-	void add_rule(const PaintingRule& constraint) noexcept { rules_.push_back(constraint); }
+	void add_rule(const PaintingRule* constraint) noexcept { rules_.push_back(constraint); }
 	void remove_all() noexcept { rules_.clear(); }
 
 
@@ -73,22 +74,19 @@ private:
 class PaintingRule
 {
 public:
-	PaintingRule(const std::string& matcher, const ColorString& color);
+	PaintingRule(const ColorString& color);
 
 
-	ColorString color() 	const noexcept { return color_; }
-	std::string	matcher()	const noexcept { return matcher_; }
+	ColorString color;
 
-
-	void set_color(const ColorString& color)		noexcept { color_ = color; }
-	void set_matcher(const std::string& matcher)	noexcept { matcher_ = matcher; }
-
-
-private:
+protected:
 	friend class Painter;
 
 
 	bool match(Painter::MatchData& data) const noexcept;
+	
+	virtual bool token_match(const std::string& token) const noexcept = 0;
+
 
 	// paints this object in "stream" and draws cursor
 	void paint_and_draw_cursor(std::stringstream& stream, const Painter::MatchData& data) const noexcept;
@@ -99,10 +97,6 @@ private:
 	
 	// cursor is in "data.token"?
 	static bool cursor_in_token(const Painter::MatchData& data) noexcept;
-
-
-	std::string matcher_;
-	ColorString color_;
 };
 
 

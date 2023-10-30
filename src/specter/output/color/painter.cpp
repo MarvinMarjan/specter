@@ -11,6 +11,13 @@ SPECTER_NAMESPACE Painter::Painter(const Cursor* cursor)
 	: cursor_(cursor)
 {}
 
+SPECTER_NAMESPACE Painter::~Painter()
+{
+	for (const PaintingRule* rule : rules_)
+		if (rule)
+			delete rule;
+}
+
 
 std::string SPECTER_NAMESPACE Painter::paint(const std::string& source)
 {
@@ -55,11 +62,16 @@ std::string SPECTER_NAMESPACE Painter::paint(const std::string& source)
 		// match "token" until a rule matches it
 		for (size_t i = 0; i < rules_.size(); i++)
 		{
+			const PaintingRule* rule = rules_[i];
+
+			if (!rule)
+				continue;
+
 			// is at last rule iteration?
 			data.last_rule = (i + 1 >= rules_.size());
 
 			// rule has matched, no need to match others
-			if (rules_[i].match(data))
+			if (rule->match(data))
 				break;
 		}
 
@@ -73,10 +85,9 @@ std::string SPECTER_NAMESPACE Painter::paint(const std::string& source)
 
 
 
-SPECTER_NAMESPACE PaintingRule::PaintingRule(const std::string& matcher, const ColorString& color)
+SPECTER_NAMESPACE PaintingRule::PaintingRule(const ColorString& color)
 {
-	matcher_ = matcher;
-	color_ = color;
+	this->color = color;
 }
 
 
@@ -90,7 +101,7 @@ bool SPECTER_NAMESPACE PaintingRule::match(Painter::MatchData& data) const noexc
 	const bool is_cursor_in_token = cursor_in_token(data);
 
 	// token do not matchs with this matcher
-	if (data.raw_token != matcher_)
+	if (!token_match(data.raw_token))
 	{
 		if (is_cursor_in_token && draw_cursor_if_at_last_rule(data))
 			data.cursor_drawn = true; // just set this to true if cursor could be drawn
@@ -106,7 +117,7 @@ bool SPECTER_NAMESPACE PaintingRule::match(Painter::MatchData& data) const noexc
 	}
 
 	else
-		stream << color_.get() << data.token << RESET_ALL;
+		stream << color.get() << data.token << RESET_ALL;
 
 
 	// modify token
@@ -129,7 +140,7 @@ void SPECTER_NAMESPACE PaintingRule::paint_and_draw_cursor(std::stringstream& st
 	if (!cursor)
 		return;
 
-	const std::string token_color = color_.get();
+	const std::string token_color = color.get();
 	const std::string cursor_color = cursor->style.color;
 
 	const size_t cursor_index = cursor->pos.index;
