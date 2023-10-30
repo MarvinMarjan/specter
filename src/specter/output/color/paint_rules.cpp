@@ -25,15 +25,17 @@ SPECTER_NAMESPACE BetweenRule::BetweenRule(const std::string& left, const std::s
 
 bool SPECTER_NAMESPACE BetweenRule::token_match(const std::string& token)
 {
-	const bool eqleft = token == left;
-	const bool eqright = token == right;
+	const bool eqleft = token == left;		// equals to left
+	const bool eqright = token == right;	// equals to right
 
+	// start
 	if (!is_token_between_ && eqleft)
 	{
 		is_token_between_ = true;
 		return true;
 	}
 
+	// end
 	if (is_token_between_ && eqright)
 	{
 		is_token_between_ = false;
