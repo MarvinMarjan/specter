@@ -212,14 +212,14 @@ bool SPECTER_NAMESPACE PaintingRule::cursor_in_token(const Painter::MatchData& d
 	// "cute", " " and "panda".
 	
 	// "cute":	begin = 0; end = 4 (ends at the blank space)
-	// " ":		begin = 4; end = 5 (ends a "p" from "panda")
+	// " ":		begin = 4; end = 5 (ends at "p" from "panda")
 	// "panda":	begin = 5; end = 9
 
-	// above, we can visualize the problem: the "end" of "cute" is same as the "begin" (4)
-	// of " ". the "end" of " " is same as the "begin" of "panda" (5).
+	// above, we can visualize the problem: the end of "cute" is same as the begin (4)
+	// of " ". the end of " " is same as the begin of "panda" (5).
 	
 	// with that, if we use "<=" instead of "<", the " " (blank space) token would be ignorated
-	// even if the mouse is at it (the condition below would consider that cursor is at the "cute" token),
+	// even if the cursor is at it (the condition below would consider that cursor is at the "cute" token),
 	// causing a weird result.
 	
 	// swaping "cursor_index >= data.begin" to use ">" and "cursor_index < data.end" to use "<="
