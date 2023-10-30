@@ -168,27 +168,25 @@ public:
 	CursorPos() = default;
 
 
-	constexpr void operator++(int) noexcept {
-		if (index < limit)
-			index++;
+	void operator++(int) noexcept {
+		if (index < limit) index++;
 	}
 
 
-	constexpr void operator--(int) noexcept {
-		if (index)
-			index--;
+	void operator--(int) noexcept {
+		if (index) index--;
 	}
 
 
-	size_t index = 0;
-	size_t limit = 0;
+	size_t index = 0;	// current cursor index
+	size_t limit = 0;	// "index" cannot exceed this limit
 };
 
 
 struct CursorStyle
 {
-	std::string color;
-	std::string at_end;
+	std::string color;	// color of the cursor
+	std::string at_end;	// character to be drawn when cursor index is at its limit
 };
 
 
