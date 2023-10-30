@@ -7,6 +7,7 @@
 SPECTER_NAMESPACE_BEGIN
 
 
+// matches if the given value is listed in "matchers"
 class MatcherRule : public PaintingRule
 {
 public:
@@ -22,6 +23,7 @@ private:
 
 
 
+// matches everything between "left" and "right"
 class BetweenRule : public PaintingRule
 {
 public:
@@ -42,6 +44,7 @@ private:
 
 
 
+// matches using a custom lambda
 class CustomRule : public PaintingRule
 {
 public:

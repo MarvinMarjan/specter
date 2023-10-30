@@ -117,7 +117,7 @@ bool SPECTER_NAMESPACE PaintingRule::match(Painter::MatchData& data)
 	// is cursor in current token?
 	const bool is_cursor_in_token = cursor_in_token(data);
 
-	// token do not matchs with this matcher
+	// token do not matches?
 	if (!token_match(data.raw_token))
 	{
 		if (is_cursor_in_token && draw_cursor_if_at_last_rule(data))
