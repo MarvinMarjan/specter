@@ -34,7 +34,8 @@ public:
 	RuleList		rules()		const noexcept { return rules_; }
 	const Cursor*	cursor()	const noexcept { return cursor_; }
 
-	void set_cursor(const Cursor* cursor)	noexcept { cursor_ = cursor; }
+	void attach_cursor(const Cursor& cursor) noexcept { cursor_ = &cursor; }
+	void detach_cursor() noexcept { cursor_ = nullptr; }
 
 
 private:

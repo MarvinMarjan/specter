@@ -25,6 +25,19 @@ std::string SPECTER_NAMESPACE Painter::paint(const std::string& source)
 	if (source.empty())
 		return source;
 
+	// there is no rules, try to draw the cursor and return
+	if (rules_.empty())
+	{
+		if (!cursor_)
+			return source;
+		
+		std::string copy = source;
+		cursor_->draw(copy);
+
+		return copy;
+	}
+
+
 	std::stringstream stream;
 	std::string token;
 
