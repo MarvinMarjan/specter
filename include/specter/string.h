@@ -34,20 +34,46 @@ inline bool is_blank(const char ch) noexcept {
 }
 
 
+
 inline bool is_alpha(const char ch) noexcept {
 	return 	(ch >= 'A' && ch <= 'Z') || 
 			(ch >= 'a' && ch <= 'z') ||
 			ch == '_';
 }
 
+inline bool is_alpha(const std::string& str) noexcept
+{
+	for (const char ch  : str)
+		if (!is_alpha(ch))
+			return false;
+
+	return true;
+}
+
+
 
 inline bool is_number(const char ch) noexcept {
 	return (ch >= '0' && ch <= '9');
 }
 
+inline bool is_number(const std::string& str) noexcept
+{
+	for (const char ch : str)
+		if (!is_number(ch))
+			return false;
+
+	return true;
+}
+
+
 
 inline bool is_alphanum(const char ch) noexcept {
 	return is_alpha(ch) || is_number(ch);
+}
+
+inline bool is_alphanum(const std::string& str) noexcept
+{
+	return is_alpha(str) || is_number(str);
 }
 
 

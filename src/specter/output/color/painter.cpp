@@ -75,7 +75,7 @@ std::string SPECTER_NAMESPACE Painter::paint(const std::string& source)
 		// match "token" until a rule matches it
 		for (size_t i = 0; i < rules_.size(); i++)
 		{
-			const PaintingRule* rule = rules_[i];
+			PaintingRule* rule = rules_[i];
 
 			if (!rule)
 				continue;
@@ -92,6 +92,10 @@ std::string SPECTER_NAMESPACE Painter::paint(const std::string& source)
 		stream << token;
 	}
 
+	for (PaintingRule* rule : rules_)
+		if (rule)
+			rule->reload();
+
 	return stream.str();
 }
 
@@ -106,7 +110,7 @@ SPECTER_NAMESPACE PaintingRule::PaintingRule(const ColorString& color)
 
 
 
-bool SPECTER_NAMESPACE PaintingRule::match(Painter::MatchData& data) const noexcept
+bool SPECTER_NAMESPACE PaintingRule::match(Painter::MatchData& data)
 {
 	std::stringstream stream;
 

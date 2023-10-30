@@ -16,30 +16,7 @@ class Cursor;
 class Painter
 {
 public:
-	using RuleList = std::vector<const PaintingRule*>;
-
-
-	Painter(const Cursor* cursor = nullptr);
-	~Painter();
-
-
-	// paints a source using PaintingRules
-	std::string paint(const std::string& source);
-
-
-	void add_rule(const PaintingRule* constraint) noexcept { rules_.push_back(constraint); }
-	void remove_all() noexcept { rules_.clear(); }
-
-
-	RuleList		rules()		const noexcept { return rules_; }
-	const Cursor*	cursor()	const noexcept { return cursor_; }
-
-	void attach_cursor(const Cursor& cursor) noexcept { cursor_ = &cursor; }
-	void detach_cursor() noexcept { cursor_ = nullptr; }
-
-
-private:
-	friend class PaintingRule;
+	using RuleList = std::vector<PaintingRule*>;
 
 
 	struct MatchData
@@ -65,6 +42,28 @@ private:
 	};
 
 
+	Painter(const Cursor* cursor = nullptr);
+	~Painter();
+
+
+	// paints a source using PaintingRules
+	std::string paint(const std::string& source);
+
+
+	void add_rule(PaintingRule* constraint) noexcept { rules_.push_back(constraint); }
+	void remove_all() noexcept { rules_.clear(); }
+
+
+	RuleList		rules()		const noexcept { return rules_; }
+	const Cursor*	cursor()	const noexcept { return cursor_; }
+
+	void attach_cursor(const Cursor& cursor) noexcept { cursor_ = &cursor; }
+	void detach_cursor() noexcept { cursor_ = nullptr; }
+
+
+private:
+
+
 	RuleList rules_;
 
 	const Cursor* cursor_;
@@ -84,9 +83,10 @@ protected:
 	friend class Painter;
 
 
-	bool match(Painter::MatchData& data) const noexcept;
+	bool match(Painter::MatchData& data);
 	
-	virtual bool token_match(const std::string& token) const noexcept = 0;
+	virtual bool token_match(const std::string& token) = 0;
+	virtual void reload() noexcept {}
 
 
 	// paints this object in "stream" and draws cursor

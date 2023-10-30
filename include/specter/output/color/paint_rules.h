@@ -16,8 +16,45 @@ public:
 	std::vector<std::string> matchers;
 
 private:
+	bool token_match(const std::string& token) override;
+};
 
-	bool token_match(const std::string& token) const noexcept override;
+
+
+
+class BetweenRule : public PaintingRule
+{
+public:
+	BetweenRule(const std::string& left, const std::string& right, const ColorString& color);
+
+
+	std::string left, right;
+
+private:
+	bool token_match(const std::string& token) override;
+	
+	void reload() noexcept override { is_token_between_ = false; }
+
+
+	bool is_token_between_;
+};
+
+
+
+
+class CustomRule : public PaintingRule
+{
+public:
+	using MatchFunction = bool (*)(const std::string&);
+
+	CustomRule(MatchFunction matcher, const ColorString& color);
+
+
+private:
+	bool token_match(const std::string& token) override;
+
+
+	MatchFunction matcher_ = nullptr;
 };
 
 
