@@ -29,7 +29,7 @@ public:
 		std::string raw_token;	// raw token (modifications are held locally; copy value)
 
 		// a cursor pointer. necessary if you want to have a Cursor drawn and 
-		// a painting of a Painter object in the same string without getting conflicts
+		// a painting of Painter object in the same string without getting conflicts
 		// or a weird result
 		const Cursor* cursor;
 
