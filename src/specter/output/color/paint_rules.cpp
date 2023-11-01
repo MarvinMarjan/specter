@@ -25,6 +25,9 @@ SPECTER_NAMESPACE BetweenRule::BetweenRule(const std::string& left, const std::s
 
 bool SPECTER_NAMESPACE BetweenRule::token_match(const std::string& token)
 {
+	// ERROR: e se um token que está entre o left e right desse objeto
+	// tiver sido matched em uma rule anterior?
+
 	const bool eqleft = token == left;		// equals to left
 	const bool eqright = token == right;	// equals to right
 
