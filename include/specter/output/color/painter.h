@@ -63,6 +63,8 @@ public:
 
 private:
 
+	void match_rules(Painter::MatchData& data) noexcept;
+
 
 	RuleList rules_;
 
@@ -91,6 +93,7 @@ protected:
 
 	// paints this object in "stream" and draws cursor
 	void paint_and_draw_cursor(std::stringstream& stream, const Painter::MatchData& data) const noexcept;
+	void paint_token_char_by_char(std::stringstream& stream, const Painter::MatchData& data, const std::string& token_color) const noexcept;
 
 
 	// recommended to use raw strings (without any coloring)
