@@ -30,7 +30,7 @@ public:
 
 		// a cursor pointer. necessary if you want to have a Cursor drawn and 
 		// a painting of Painter object in the same string without getting conflicts
-		// or an weird result
+		// or a weird result
 		const Cursor* cursor;
 
 		const size_t& begin;
@@ -63,6 +63,8 @@ public:
 
 private:
 
+	void match_rules(Painter::MatchData& data) noexcept;
+
 
 	RuleList rules_;
 
@@ -84,6 +86,7 @@ protected:
 
 
 	bool match(Painter::MatchData& data);
+	void paint_token(std::stringstream& stream, Painter::MatchData& data, const bool draw_cursor = false) const noexcept;
 	
 	virtual bool token_match(const std::string& token) = 0;
 	virtual void reload() noexcept {}
@@ -91,6 +94,7 @@ protected:
 
 	// paints this object in "stream" and draws cursor
 	void paint_and_draw_cursor(std::stringstream& stream, const Painter::MatchData& data) const noexcept;
+	void paint_token_char_by_char(std::stringstream& stream, const Painter::MatchData& data, const std::string& token_color) const noexcept;
 
 
 	// recommended to use raw strings (without any coloring)
