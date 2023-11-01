@@ -3,64 +3,63 @@
 #include <algorithm>
 
 
+
 SPECTER_NAMESPACE MatcherRule::MatcherRule(const std::initializer_list<std::string>& matchers, const ColorString& color)
-	: PaintingRule(color), matchers(matchers)
+	: PaintRule(color), matchers(matchers)
 {}
 
 
-bool SPECTER_NAMESPACE MatcherRule::token_match(const std::string& token)
+bool SPECTER_NAMESPACE MatcherRule::token_match(Painter::MatchData& data) noexcept
 {
-	return (std::find(matchers.cbegin(), matchers.cend(), token) != matchers.cend());
+	return (std::find(matchers.cbegin(), matchers.cend(), data.token) != matchers.cend());
 }
 
 
 
 
 SPECTER_NAMESPACE BetweenRule::BetweenRule(const std::string& left, const std::string& right, const ColorString& color)
-	: PaintingRule(color), left(left), right(right)
+	: PaintRule(color), left(left), right(right)
 {
-	is_token_between_ = false;
+	opened_ = false;
 }
 
 
-bool SPECTER_NAMESPACE BetweenRule::token_match(const std::string& token)
+bool SPECTER_NAMESPACE BetweenRule::token_match(Painter::MatchData& data) noexcept
 {
-	// ERROR: e se um token que está entre o left e right desse objeto
-	// tiver sido matched em uma rule anterior?
+	const bool eqleft = data.raw_token == left;
+	const bool eqright = data.raw_token == right;
 
-	const bool eqleft = token == left;		// equals to left
-	const bool eqright = token == right;	// equals to right
-
-	// start
-	if (!is_token_between_ && eqleft)
+	// starts coloring until close
+	if (eqleft && !opened_)
 	{
-		is_token_between_ = true;
+		opened_ = true;
+		data.forcing_rule = this;
 		return true;
 	}
 
-	// end
-	if (is_token_between_ && eqright)
+	// end coloring
+	if (eqright && opened_)
 	{
-		is_token_between_ = false;
+		opened_ = false;
+		data.forcing_rule = nullptr;
 		return true;
 	}
 
-	return is_token_between_;
+	return opened_;
 }
-
 
 
 
 
 SPECTER_NAMESPACE CustomRule::CustomRule(MatchFunction matcher, const ColorString& color)
-	: PaintingRule(color), matcher_(matcher)
+	: PaintRule(color), matcher_(matcher)
 {}
 
 
-bool SPECTER_NAMESPACE CustomRule::token_match(const std::string& token)
+bool SPECTER_NAMESPACE CustomRule::token_match(Painter::MatchData& data) noexcept
 {
 	if (matcher_)
-		return matcher_(token);
+		return matcher_(data);
 
 	return false;
 }

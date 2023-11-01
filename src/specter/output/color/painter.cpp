@@ -13,13 +13,13 @@ SPECTER_NAMESPACE Painter::Painter(const Cursor* cursor)
 
 SPECTER_NAMESPACE Painter::~Painter()
 {
-	for (const PaintingRule* rule : rules_)
+	for (const PaintRule* rule : rules_)
 		if (rule)
 			delete rule;
 }
 
 
-std::string SPECTER_NAMESPACE Painter::paint(const std::string& source)
+std::string SPECTER_NAMESPACE Painter::paint(const std::string& source) noexcept
 {
 	// "source" is empty, just return it
 	if (source.empty())
@@ -79,7 +79,7 @@ std::string SPECTER_NAMESPACE Painter::paint(const std::string& source)
 		stream << token;
 	}
 
-	for (PaintingRule* rule : rules_)
+	for (PaintRule* rule : rules_)
 		if (rule)
 			rule->reload();
 
@@ -92,15 +92,19 @@ void SPECTER_NAMESPACE Painter::match_rules(Painter::MatchData& data) noexcept
 {
 	for (size_t i = 0; i < rules_.size(); i++)
 	{
-		PaintingRule* rule = rules_[i];
+		PaintRule* rule = rules_[i];
 
 		if (!rule)
 			continue;
 
+		// force a rule to match, if it is not nullptr
+		if (data.forcing_rule)
+			rule = data.forcing_rule;
+
 		// is at last rule iteration?
 		data.last_rule = (i + 1 >= rules_.size());
 
-		// rule has matched, no need to match others
+		// rule has matched, do not match others
 		if (rule->match(data))
 			break;
 	}
@@ -109,7 +113,7 @@ void SPECTER_NAMESPACE Painter::match_rules(Painter::MatchData& data) noexcept
 
 
 
-SPECTER_NAMESPACE PaintingRule::PaintingRule(const ColorString& color)
+SPECTER_NAMESPACE PaintRule::PaintRule(const ColorString& color)
 {
 	this->color = color;
 }
@@ -117,7 +121,7 @@ SPECTER_NAMESPACE PaintingRule::PaintingRule(const ColorString& color)
 
 
 
-bool SPECTER_NAMESPACE PaintingRule::match(Painter::MatchData& data)
+bool SPECTER_NAMESPACE PaintRule::match(Painter::MatchData& data) noexcept
 {
 	std::stringstream stream;
 
@@ -125,7 +129,7 @@ bool SPECTER_NAMESPACE PaintingRule::match(Painter::MatchData& data)
 	const bool is_cursor_in_token = cursor_in_token(data);
 
 	// token do not match?
-	if (!token_match(data.raw_token))
+	if (!token_match(data))
 	{
 		if (is_cursor_in_token && draw_cursor_if_at_last_rule(data))
 			data.cursor_drawn = true; // just set this to true if cursor could be drawn
@@ -143,29 +147,28 @@ bool SPECTER_NAMESPACE PaintingRule::match(Painter::MatchData& data)
 
 
 
-void SPECTER_NAMESPACE PaintingRule::paint_token(std::stringstream& stream, Painter::MatchData& data, const bool draw_cursor) const noexcept
+void SPECTER_NAMESPACE PaintRule::paint_token(std::stringstream& stream, Painter::MatchData& data, const bool draw_cursor) const noexcept
 {
 	// paints the token and draws the cursor
 	if (draw_cursor)
 	{
 		paint_and_draw_cursor(stream, data);
 		data.cursor_drawn = true;
-		
 		return;
 	}
-	
+
 	// no need to draw the cursor, just paint the token
 	stream << color.get() << data.token << RESET_ALL;
 }
 
 
 
-void SPECTER_NAMESPACE PaintingRule::paint_and_draw_cursor(std::stringstream& stream, const Painter::MatchData& data) const noexcept
+void SPECTER_NAMESPACE PaintRule::paint_and_draw_cursor(std::stringstream& stream, const Painter::MatchData& data) const noexcept
 {
 	const Cursor* cursor = data.cursor;
 
 	// note: condition below is just for safety purposes, since, by default,
-	// this method will not be called if "is_cursor_in_token" (see PaintingRule::match)
+	// this method will not be called if "is_cursor_in_token" (see PaintRule::match)
 	// is false (it is false when cursor is a nullptr)
 
 	// there is no cursor to draw?
@@ -203,7 +206,7 @@ void SPECTER_NAMESPACE PaintingRule::paint_and_draw_cursor(std::stringstream& st
 
 
 
-void SPECTER_NAMESPACE PaintingRule::paint_token_char_by_char(std::stringstream& stream, const Painter::MatchData& data, const std::string& token_color) const noexcept
+void SPECTER_NAMESPACE PaintRule::paint_token_char_by_char(std::stringstream& stream, const Painter::MatchData& data, const std::string& token_color) const noexcept
 {
 	const Cursor* cursor = data.cursor;
 
@@ -230,7 +233,7 @@ void SPECTER_NAMESPACE PaintingRule::paint_token_char_by_char(std::stringstream&
 
 
 
-bool SPECTER_NAMESPACE PaintingRule::draw_cursor_if_at_last_rule(const Painter::MatchData& data) noexcept
+bool SPECTER_NAMESPACE PaintRule::draw_cursor_if_at_last_rule(const Painter::MatchData& data) noexcept
 {
 	// not at last rule iteration. return
 	if (!data.last_rule)
@@ -245,7 +248,7 @@ bool SPECTER_NAMESPACE PaintingRule::draw_cursor_if_at_last_rule(const Painter::
 
 
 
-bool SPECTER_NAMESPACE PaintingRule::cursor_in_token(const Painter::MatchData& data) noexcept
+bool SPECTER_NAMESPACE PaintRule::cursor_in_token(const Painter::MatchData& data) noexcept
 {
 	// nullptr cursor. return false
 	if (!data.cursor)
