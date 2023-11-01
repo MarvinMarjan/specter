@@ -86,6 +86,7 @@ protected:
 
 
 	bool match(Painter::MatchData& data);
+	void paint_token(std::stringstream& stream, Painter::MatchData& data, const bool draw_cursor = false) const noexcept;
 	
 	virtual bool token_match(const std::string& token) = 0;
 	virtual void reload() noexcept {}

@@ -133,21 +133,29 @@ bool SPECTER_NAMESPACE PaintingRule::match(Painter::MatchData& data)
 		return false;
 	}
 
-
-	if (is_cursor_in_token)
-	{
-		paint_and_draw_cursor(stream, data);
-		data.cursor_drawn = true;
-	}
-
-	else
-		stream << color.get() << data.token << RESET_ALL;
-
+	paint_token(stream, data, is_cursor_in_token);
 
 	// modify token
 	data.token = stream.str();
 
 	return true;
+}
+
+
+
+void SPECTER_NAMESPACE PaintingRule::paint_token(std::stringstream& stream, Painter::MatchData& data, const bool draw_cursor) const noexcept
+{
+	// paints the token and draws the cursor
+	if (draw_cursor)
+	{
+		paint_and_draw_cursor(stream, data);
+		data.cursor_drawn = true;
+		
+		return;
+	}
+	
+	// no need to draw the cursor, just paint the token
+	stream << color.get() << data.token << RESET_ALL;
 }
 
 
