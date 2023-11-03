@@ -7,6 +7,7 @@
 SPECTER_NAMESPACE_BEGIN
 
 
+// says when a MatchRule must stop matching
 class StopCondition
 {
 public:
@@ -17,7 +18,7 @@ public:
 
 
 
-
+// matches an amount of tokens forward then stop
 class RangeAmount : public StopCondition
 {
 public:
@@ -39,6 +40,7 @@ private:
 };
 
 
+// matches until a token
 class UntilToken : public StopCondition
 {
 public:
