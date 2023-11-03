@@ -4,14 +4,46 @@
 
 
 
-SPECTER_NAMESPACE MatcherRule::MatcherRule(const std::initializer_list<std::string>& matchers, const ColorString& color)
-	: PaintRule(color), matchers(matchers)
+SPECTER_NAMESPACE MatcherRule::MatcherRule(const std::initializer_list<std::string>& matchers, const ColorString& color, StopCondition* condition)
+	: PaintRule(color), matchers(matchers), cond_(condition)
 {}
+
+SPECTER_NAMESPACE MatcherRule::~MatcherRule()
+{
+	if (cond_)
+		delete cond_;
+}
 
 
 bool SPECTER_NAMESPACE MatcherRule::token_match(Painter::MatchData& data) noexcept
 {
-	return (std::find(matchers.cbegin(), matchers.cend(), data.token) != matchers.cend());
+	const bool found = std::find(matchers.cbegin(), matchers.cend(), data.token) != matchers.cend();
+
+	if (found)
+	{
+		matched_ = true;
+		return true;
+	}
+
+	if (!cond_ || !matched_)
+		return found;
+
+
+	// continue force matching?
+	if (!cond_->stop())
+	{
+		data.forcing_rule = this;
+		cond_->process(data);
+		return true;
+	}
+	
+	// stop condition has reached
+
+	data.forcing_rule = nullptr;
+	matched_ = false;
+	cond_->reload();
+
+	return false;
 }
 
 
@@ -52,14 +84,14 @@ bool SPECTER_NAMESPACE BetweenRule::token_match(Painter::MatchData& data) noexce
 
 
 SPECTER_NAMESPACE CustomRule::CustomRule(MatchFunction matcher, const ColorString& color)
-	: PaintRule(color), matcher_(matcher)
+	: PaintRule(color), matcher(matcher)
 {}
 
 
 bool SPECTER_NAMESPACE CustomRule::token_match(Painter::MatchData& data) noexcept
 {
-	if (matcher_)
-		return matcher_(data);
+	if (matcher)
+		return matcher(data);
 
 	return false;
 }

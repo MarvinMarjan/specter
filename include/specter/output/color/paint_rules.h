@@ -1,6 +1,6 @@
 #pragma once
 
-#include <specter/output/color/painter.h>
+#include <specter/output/color/stop_condition.h>
 
 
 
@@ -11,13 +11,20 @@ SPECTER_NAMESPACE_BEGIN
 class MatcherRule : public PaintRule
 {
 public:
-	MatcherRule(const std::initializer_list<std::string>& matchers, const ColorString& color);
+	MatcherRule(const std::initializer_list<std::string>& matchers, const ColorString& color, StopCondition* condition = nullptr);
+	~MatcherRule();
 
 
 	std::vector<std::string> matchers;
 
 private:
 	bool token_match(Painter::MatchData& data) noexcept override;
+
+	void reload() noexcept override { matched_ = false; }
+
+
+	StopCondition* cond_ = nullptr;
+	bool matched_ = false;
 };
 
 
@@ -55,11 +62,10 @@ public:
 	CustomRule(MatchFunction matcher, const ColorString& color);
 
 
+	MatchFunction matcher = nullptr;
+
 private:
 	bool token_match(Painter::MatchData& data) noexcept override;
-
-
-	MatchFunction matcher_ = nullptr;
 };
 
 

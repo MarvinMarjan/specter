@@ -82,6 +82,7 @@ class PaintRule
 {
 public:
 	PaintRule(const ColorString& color);
+	virtual ~PaintRule() = default;
 
 
 	ColorString color;
