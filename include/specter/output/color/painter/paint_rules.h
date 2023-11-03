@@ -2,6 +2,8 @@
 
 #include <specter/output/color/painter/stop_condition.h>
 
+#include <functional>
+
 
 
 SPECTER_NAMESPACE_BEGIN
@@ -57,7 +59,7 @@ private:
 class CustomRule : public PaintRule
 {
 public:
-	using MatchFunction = bool (*)(Painter::MatchData&) noexcept;
+	using MatchFunction = std::function<bool (Painter::MatchData&)>;
 
 	CustomRule(MatchFunction matcher, const ColorString& color);
 

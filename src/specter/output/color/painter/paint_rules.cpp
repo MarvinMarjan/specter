@@ -17,7 +17,7 @@ SPECTER_NAMESPACE MatcherRule::~MatcherRule()
 
 bool SPECTER_NAMESPACE MatcherRule::token_match(Painter::MatchData& data) noexcept
 {
-	const bool found = std::find(matchers.cbegin(), matchers.cend(), data.token) != matchers.cend();
+	const bool found = std::find(matchers.cbegin(), matchers.cend(), data.token.source) != matchers.cend();
 
 	if (found)
 	{
@@ -58,8 +58,8 @@ SPECTER_NAMESPACE BetweenRule::BetweenRule(const std::string& left, const std::s
 
 bool SPECTER_NAMESPACE BetweenRule::token_match(Painter::MatchData& data) noexcept
 {
-	const bool eqleft = data.raw_token == left;
-	const bool eqright = data.raw_token == right;
+	const bool eqleft = data.raw_token.source == left;
+	const bool eqright = data.raw_token.source == right;
 
 	// starts coloring until close
 	if (eqleft && !opened_)

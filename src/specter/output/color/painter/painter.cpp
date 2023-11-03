@@ -38,46 +38,26 @@ std::string SPECTER_NAMESPACE Painter::paint(const std::string& source) noexcept
 	}
 
 
+	std::vector<Token> tokens = TokenScanner(source).scan();
+
 	std::stringstream stream;
-	std::string token;
+	Token token;
 
-	size_t begin = 0;
-	size_t end = 0;
+	Painter::MatchData data(token, cursor_);
 
-	Painter::MatchData data(token, cursor_, begin, end);
 
-	// if code reachs here, it means "source" is not empty.
-	// that way, we can ensure that at least one iteration will occur
-	bool at_end = false;
-
-	while (!at_end)
+	for (size_t i = 0; i < tokens.size(); i++)
 	{
-		// set "begin" to "end"
-		begin = end;
+		data.last_token = (i + 1 >= tokens.size());
 
-		// gets the current character and increments "end"
-		const char ch = source[end++];
-
-		// update "at_end" condition
-		at_end = (end >= source.size());
-
-		// find the last index of a word token
-		while (is_alphanum(ch) && is_alphanum(source[end]))
-			end++;
-
-		// gets the current char/word substring
-		token = source.substr(begin, end - begin);
+		token = tokens[i];
 		data.raw_token = token;
 
-		// is at last token iteration?
-		data.last_token = at_end;
-
-		// match "token" until a rule matches it
 		match_rules(data);
 
-		// add to "stream" the matched "token"
-		stream << token;
+		stream << token.source;
 	}
+
 
 	for (PaintRule* rule : rules_)
 		if (rule)
@@ -140,7 +120,7 @@ bool SPECTER_NAMESPACE PaintRule::match(Painter::MatchData& data) noexcept
 	paint_token(stream, data, is_cursor_in_token);
 
 	// modify token
-	data.token = stream.str();
+	data.token.source = stream.str();
 
 	return true;
 }
@@ -158,7 +138,7 @@ void SPECTER_NAMESPACE PaintRule::paint_token(std::stringstream& stream, Painter
 	}
 
 	// no need to draw the cursor, just paint the token
-	stream << color.get() << data.token << RESET_ALL;
+	stream << color.get() << data.token.source << RESET_ALL;
 }
 
 
@@ -181,16 +161,16 @@ void SPECTER_NAMESPACE PaintRule::paint_and_draw_cursor(std::stringstream& strea
 	const size_t cursor_index = cursor->pos.index;
 	
 	// cursor index relative to token (0 means the first token character)
-	const size_t relative_index = cursor_index - data.begin;
+	const size_t relative_index = cursor_index - data.raw_token.begin;
 
 
 	// start token color
 	stream << token_color;
 
 	// is cursor at end of token?
-	if (relative_index >= data.raw_token.size())
+	if (relative_index >= data.raw_token.source.size())
 	{
-		stream << data.raw_token;
+		stream << data.raw_token.source;
 		stream << cursor->at_end(); // adds "RESET_ALL" at end. no need to append it again
 
 		return;
@@ -214,11 +194,11 @@ void SPECTER_NAMESPACE PaintRule::paint_token_char_by_char(std::stringstream& st
 		return;
 
 	const size_t cursor_index = cursor->pos.index;
-	const size_t relative_index = cursor_index - data.begin;
+	const size_t relative_index = cursor_index - data.raw_token.begin;
 
-	for (size_t i = 0; i < data.raw_token.size(); i++)
+	for (size_t i = 0; i < data.raw_token.source.size(); i++)
 	{
-		const char token_char = data.raw_token[i];
+		const char token_char = data.raw_token.source[i];
 
 		// is cursor at current character?
 		if (i == relative_index)
@@ -239,9 +219,9 @@ bool SPECTER_NAMESPACE PaintRule::draw_cursor_if_at_last_rule(const Painter::Mat
 	if (!data.last_rule)
 		return false;
 
-	const size_t relative_index = data.cursor->pos.index - data.begin;
+	const size_t relative_index = data.cursor->pos.index - data.raw_token.begin;
 
-	data.cursor->draw(data.token, relative_index);
+	data.cursor->draw(data.token.source, relative_index);
 
 	return true;
 }
@@ -286,5 +266,5 @@ bool SPECTER_NAMESPACE PaintRule::cursor_in_token(const Painter::MatchData& data
 	// swaping "cursor_index >= data.begin" to use ">" and "cursor_index < data.end" to use "<="
 	// would also work
 
-	return (!data.cursor_drawn && cursor_index >= data.begin && cursor_index < data.end);
+	return (!data.cursor_drawn && cursor_index >= data.raw_token.begin && cursor_index < data.raw_token.begin);
 }

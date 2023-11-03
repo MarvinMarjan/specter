@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <specter/output/color/structure/color_object.h>
+#include <specter/output/color/painter/token_scanner.h>
 
 
 
@@ -21,15 +22,12 @@ public:
 
 	struct MatchData
 	{
-		MatchData(std::string& token, const Cursor* cursor, const size_t& begin, const size_t& end)
-			: token(token), cursor(cursor), begin(begin), end(end) {}
+		MatchData(Token& token, const Cursor* cursor)
+			: token(token), cursor(cursor) {}
 
 
-		std::string& token;		// token
-		std::string raw_token;	// raw token (modifications are held locally; copy value)
-
-		const size_t& begin;
-		const size_t& end;
+		Token& token;		// token
+		Token raw_token;	// raw token (modifications are held locally; copy value)
 
 
 		// a cursor pointer. necessary if you want to have a Cursor drawn and 

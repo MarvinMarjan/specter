@@ -50,7 +50,7 @@ public:
 
 	bool stop() const noexcept override { return current_ == token_; }
 
-	void process(Painter::MatchData& data) noexcept override { current_ = data.raw_token; }
+	void process(Painter::MatchData& data) noexcept override { current_ = data.raw_token.source; }
 
 	void reload() noexcept override { current_.clear(); }
 
