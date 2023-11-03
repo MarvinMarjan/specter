@@ -22,7 +22,7 @@ public:
 class RangeAmount : public StopCondition
 {
 public:
-	RangeAmount(const unsigned int amount)
+	RangeAmount(const size_t amount)
 		: amount_init_(amount), amount_(amount) {}
 
 
@@ -34,9 +34,9 @@ public:
 
 
 private:
-	unsigned int amount_;
+	size_t amount_;
 
-	const unsigned int amount_init_;
+	const size_t amount_init_;
 };
 
 
