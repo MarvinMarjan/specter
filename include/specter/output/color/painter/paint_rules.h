@@ -1,6 +1,6 @@
 #pragma once
 
-#include <specter/output/color/stop_condition.h>
+#include <specter/output/color/painter/stop_condition.h>
 
 
 

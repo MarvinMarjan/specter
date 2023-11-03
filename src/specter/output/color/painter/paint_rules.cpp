@@ -1,4 +1,4 @@
-#include <specter/output/color/paint_rules.h>
+#include <specter/output/color/painter/paint_rules.h>
 
 #include <algorithm>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <specter/output/color/painter.h>
+#include <specter/output/color/painter/painter.h>
 
 
 

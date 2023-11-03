@@ -1,6 +1,6 @@
 #pragma once
 
-#include <specter/output/color/color_object.h>
+#include <specter/output/color/structure/color_object.h>
 
 
 
