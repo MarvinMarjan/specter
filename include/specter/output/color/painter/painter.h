@@ -15,6 +15,8 @@ class Cursor;
 class MatchData;
 
 
+// an object that takes a string source and paints it
+// using PaintRules
 class Painter
 {
 public:
@@ -27,14 +29,14 @@ public:
 
 
 	void add_rule(PaintRule* constraint) noexcept { rules_.push_back(constraint); }
-	void remove_all() noexcept { rules_.clear(); }
+	void remove_all_rules() noexcept { rules_.clear(); }
 
 
 	std::vector<PaintRule*>		rules()		const noexcept { return rules_; }
 	const Cursor*				cursor()	const noexcept { return cursor_; }
 
-	void attach_cursor(const Cursor& cursor) noexcept { cursor_ = &cursor; }
-	void detach_cursor() noexcept { cursor_ = nullptr; }
+	void attach_cursor(const Cursor& cursor)	noexcept { cursor_ = &cursor; }
+	void detach_cursor() 						noexcept { cursor_ = nullptr; }
 
 
 private:
@@ -50,6 +52,7 @@ private:
 class StopCondition;
 
 
+// rule sets that checks if a token matches with them
 class PaintRule
 {
 public:
@@ -57,12 +60,13 @@ public:
 	virtual ~PaintRule();
 
 
+	// color to be painted if a token matches
 	ColorString color;
 
 
 protected:
 	friend class Painter;
-	friend class Match;
+	friend class Matcher;
 
 
 	bool match(MatchData& data) noexcept;

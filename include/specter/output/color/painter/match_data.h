@@ -18,7 +18,7 @@ class MatchData
 {
 public:
 	MatchData(Token& token, size_t index, const Cursor* cursor)
-		: raw_token(token), token(token), index(index), cursor(cursor)
+		: raw_token(token), token(token), index_(index), cursor(cursor)
 	{}
 
 
@@ -27,7 +27,9 @@ public:
 
 
 	std::vector<Token> tokens;
-	size_t& index;
+
+	// current token index
+	size_t index() const noexcept { return index_; }
 
 
 	const Token&	raw_token;	// raw token (modifications are not allowed)
@@ -42,16 +44,41 @@ public:
 
 	// if not nullptr, tokens will always be matched with this rule
 	PaintRule* forcing_rule = nullptr;
-	PaintRule* current_rule = nullptr;
+
+	
+	const PaintRule* current_rule() const noexcept { return current_rule_; }
 
 
-	size_t offset = 0;
+	// if not zero, the current rule will also match the next n tokens
+	size_t offset() const noexcept { return offset_; }
+
+
+	bool last_rule()	const noexcept { return last_rule_; }	// last rule iteration?
+	bool last_token()	const noexcept { return last_token_; }	// last token iteration?
+	bool end_reached()	const noexcept { return end_reached_; }	// end of tokens reached?
 
 
 	bool cursor_drawn = false;	// cursor has been drawn?
-	bool last_rule = false;		// last rule iteration?
-	bool last_token = false;	// last token iteration?
-	bool end_reached = false;
+
+
+private:
+	friend class Painter;
+	friend class PaintRule;
+	friend class Matcher;
+
+
+	size_t& index_;
+
+
+	PaintRule* current_rule_ = nullptr;
+
+
+	size_t offset_ = 0;
+
+
+	bool last_rule_ = false;
+	bool last_token_ = false;
+	bool end_reached_ = false;
 };
 
 

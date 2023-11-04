@@ -17,14 +17,19 @@ SPECTER_NAMESPACE Matcher::Matcher(const std::initializer_list<std::string>& tok
 
 bool SPECTER_NAMESPACE Matcher::match(MatchData& data) const noexcept
 {
-	if (data.tokens.size() - data.index < matcher_.size())
+	// tokens size is less than this matcher size. return
+	if (data.tokens.size() - data.index_ < matcher_.size())
 		return false;
 
+	// tries to match with the token
 	for (size_t i = 0; i < matcher_.size(); i++)
-		if (matcher_[i] != data.tokens[data.index + i].source)
+		if (matcher_[i] != data.tokens[data.index_ + i].source)
 			return false;
 
-	data.offset = matcher_.size() - 1;
+	// token matched
+	
+	// paints the next tokens that are part of this matcher
+	data.offset_ = matcher_.size() - 1;
 
 	return true;
 }

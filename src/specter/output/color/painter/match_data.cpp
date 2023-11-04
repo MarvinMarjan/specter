@@ -6,10 +6,11 @@
 
 void SPECTER_NAMESPACE MatchData::next() noexcept
 {
-	if (end_reached)
+	if (end_reached_)
 		return;
 
-	index++;
+	// advance token index
+	index_++;
 
 	update();
 }
@@ -17,9 +18,10 @@ void SPECTER_NAMESPACE MatchData::next() noexcept
 
 void SPECTER_NAMESPACE MatchData::update() noexcept
 {
-	last_token = (index + 1 >= tokens.size());
-	end_reached = (index >= tokens.size());
+	last_token_ = (index_ + 1 >= tokens.size());	// at last token?
+	end_reached_ = (index_ >= tokens.size());		// no tokens left? (processed all)
 
-	if (!end_reached)
-		token = tokens[index];
+	// update current token, if not at end
+	if (!end_reached_)
+		token = tokens[index_];
 }

@@ -13,6 +13,8 @@ SPECTER_NAMESPACE_BEGIN
 class MatchData;
 
 
+// represents a token matcher. can match two or more tokens as
+// it was one. example: "->" (token '-' and '>')
 class Matcher
 {
 public:

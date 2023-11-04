@@ -10,7 +10,8 @@
 SPECTER_NAMESPACE_BEGIN
 
 
-// says when a MatchRule must stop matching
+// if attached to a PaintRule, when it matches, the rule will start
+// paint the next tokens (even if they do not match) until the stopping condition is reached
 class StopCondition
 {
 public:

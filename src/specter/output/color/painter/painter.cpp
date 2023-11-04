@@ -16,6 +16,7 @@ SPECTER_NAMESPACE Painter::Painter(const Cursor* cursor)
 
 SPECTER_NAMESPACE Painter::~Painter()
 {
+	// free all rules memory
 	for (size_t i = 0; i < rules_.size(); i++)
 		if (rules_[i])
 		{
@@ -58,7 +59,7 @@ std::string SPECTER_NAMESPACE Painter::paint(const std::string& source) noexcept
 	data.update();	
 
 	// iterate through all tokens and match them
-	while (!data.end_reached)
+	while (!data.end_reached())
 	{
 		// match the current token with all rules
 		match_rules(data);
@@ -93,8 +94,8 @@ void SPECTER_NAMESPACE Painter::match_rules(MatchData& data) noexcept
 			rule = data.forcing_rule;
 
 		// is at last rule iteration?
-		data.last_rule = (i + 1 >= rules_.size());
-		data.current_rule = rule;
+		data.last_rule_ = (i + 1 >= rules_.size());
+		data.current_rule_ = rule;
 
 		// rule has matched, do not match others
 		if (rule->match(data))
@@ -144,6 +145,7 @@ bool SPECTER_NAMESPACE PaintRule::match(MatchData& data) noexcept
 	// modify token
 	data.token.source = stream.str();
 
+	// reload StopCondition if not nullptr
 	if (m_stop_condition)
 		m_stop_condition->reload();
 	
@@ -165,6 +167,7 @@ void SPECTER_NAMESPACE PaintRule::paint_token(std::stringstream& stream, MatchDa
 	else
 		stream << color.get() << data.token.source << RESET_ALL;
 
+	
 	process_stop_condition(stream, data);
 }
 
@@ -172,16 +175,21 @@ void SPECTER_NAMESPACE PaintRule::paint_token(std::stringstream& stream, MatchDa
 
 void SPECTER_NAMESPACE PaintRule::process_stop_condition(std::stringstream& stream, MatchData& data) const noexcept
 {
-	if ((!m_stop_condition || m_stop_condition->stop()) && !data.offset)
+	if ((!m_stop_condition || m_stop_condition->stop()) && !data.offset_)
 		return;
 
+	// process stop condition if not nullptr
 	if (m_stop_condition)
 		m_stop_condition->process(data);
 
-	if (data.offset)
-		data.offset--;
+	// decreases offset if not zero
+	if (data.offset_)
+		data.offset_--;
 	
+	// advance to the next token
 	data.next();
+
+	// paint the token
 	paint_token(stream, data, cursor_in_token(data));
 }
 
@@ -261,7 +269,7 @@ void SPECTER_NAMESPACE PaintRule::paint_token_char_by_char(std::stringstream& st
 bool SPECTER_NAMESPACE PaintRule::draw_cursor_if_at_last_rule(const MatchData& data) noexcept
 {
 	// not at last rule iteration. return
-	if (!data.last_rule)
+	if (!data.last_rule())
 		return false;
 
 	const size_t relative_index = data.cursor->pos.index - data.raw_token.begin;
@@ -283,7 +291,7 @@ bool SPECTER_NAMESPACE PaintRule::cursor_in_token(const MatchData& data) noexcep
 
 	// last token reached but cursor was not drawn,
 	// it means that the cursor might be in the current "data.token"
-	if (data.last_token && !data.cursor_drawn)
+	if (data.last_token() && !data.cursor_drawn)
 		return true;
 
 	// "!data.cursor_drawn":			do not draw cursor twice
