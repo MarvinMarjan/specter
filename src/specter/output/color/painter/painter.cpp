@@ -38,14 +38,15 @@ std::string SPECTER_NAMESPACE Painter::paint(const std::string& source) noexcept
 	}
 
 
-	std::vector<Token> tokens = TokenScanner(source).scan();
+	const std::vector<Token> tokens = TokenScanner(source).scan();
 
 	std::stringstream stream;
 	Token token;
 
 	Painter::MatchData data(token, cursor_);
 
-
+	
+	// iterate through all tokens and match them
 	for (size_t i = 0; i < tokens.size(); i++)
 	{
 		data.last_token = (i + 1 >= tokens.size());
@@ -53,8 +54,10 @@ std::string SPECTER_NAMESPACE Painter::paint(const std::string& source) noexcept
 		token = tokens[i];
 		data.raw_token = token;
 
+		// match the current token with all rules
 		match_rules(data);
 
+		
 		stream << token.source;
 	}
 
@@ -196,6 +199,7 @@ void SPECTER_NAMESPACE PaintRule::paint_token_char_by_char(std::stringstream& st
 	const size_t cursor_index = cursor->pos.index;
 	const size_t relative_index = cursor_index - data.raw_token.begin;
 
+	// paints character by character. also draws the cursor
 	for (size_t i = 0; i < data.raw_token.source.size(); i++)
 	{
 		const char token_char = data.raw_token.source[i];
