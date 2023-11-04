@@ -1,6 +1,9 @@
 #pragma once
 
-#include <specter/output/color/painter/painter.h>
+#include <string>
+
+#include <specter/output/color/painter/match_data.h>
+#include <specter/output/color/painter/token_scanner.h>
 
 
 
@@ -11,8 +14,11 @@ SPECTER_NAMESPACE_BEGIN
 class StopCondition
 {
 public:
-	virtual bool stop() const noexcept = 0;
-	virtual void process(Painter::MatchData& data) noexcept = 0;
+	virtual bool stop()		const noexcept = 0;
+	virtual bool proceed()	const noexcept { return !stop(); }
+
+	virtual void process(MatchData& data) noexcept = 0;
+
 	virtual void reload() noexcept = 0;
 };
 
@@ -26,9 +32,9 @@ public:
 		: amount_init_(amount), amount_(amount) {}
 
 
-	bool stop() const noexcept override { return amount_ == 0; }
+	bool stop()		const noexcept override	{ return amount_ == 0; }
 
-	void process(Painter::MatchData& data) noexcept override { if (amount_ > 0) amount_--; }
+	void process(MatchData& data) noexcept override { if (amount_ > 0) amount_--; }
 
 	void reload() noexcept override { amount_ = amount_init_; }
 
@@ -48,9 +54,9 @@ public:
 		: token_(token) {}
 
 
-	bool stop() const noexcept override { return current_ == token_; }
+	bool stop()		const noexcept override { return current_ == token_; }
 
-	void process(Painter::MatchData& data) noexcept override { current_ = data.raw_token.source; }
+	void process(MatchData& data) noexcept override { current_ = data.raw_token.source; }
 
 	void reload() noexcept override { current_.clear(); }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <specter/output/color/painter/stop_condition.h>
+#include <specter/output/color/painter/painter.h>
 
 #include <functional>
 
@@ -9,23 +10,40 @@
 SPECTER_NAMESPACE_BEGIN
 
 
+class MatchData;
+
+
+class Matcher
+{
+public:
+	Matcher(const std::string& token);
+	Matcher(const std::initializer_list<std::string>& tokens);
+
+
+	bool match(MatchData& data) const noexcept;
+
+
+private:
+	std::vector<std::string> matcher_;
+};
+
+
+
 // matches if the given value is listed in "matchers"
 class MatcherRule : public PaintRule
 {
 public:
-	MatcherRule(const std::initializer_list<std::string>& matchers, const ColorString& color, StopCondition* condition = nullptr);
-	~MatcherRule();
+	MatcherRule(const std::initializer_list<Matcher>& matchers, const ColorString& color, StopCondition* condition = nullptr);
 
 
-	std::vector<std::string> matchers;
+	std::vector<Matcher> matchers;
 
 private:
-	bool token_match(Painter::MatchData& data) noexcept override;
+	bool token_match(MatchData& data) noexcept override;
 
 	void reload() noexcept override { matched_ = false; }
 
 
-	StopCondition* cond_ = nullptr;
 	bool matched_ = false;
 };
 
@@ -37,13 +55,13 @@ private:
 class BetweenRule : public PaintRule
 {
 public:
-	BetweenRule(const std::string& left, const std::string& right, const ColorString& color);
+	BetweenRule(const Matcher& left, const Matcher& right, const ColorString& color, StopCondition* condition = nullptr);
 
 
-	std::string left, right;
+	Matcher left, right;
 
 private:
-	bool token_match(Painter::MatchData& data) noexcept override;
+	bool token_match(MatchData& data) noexcept override;
 
 	void reload() noexcept override { opened_ = false; }
 
@@ -59,15 +77,15 @@ private:
 class CustomRule : public PaintRule
 {
 public:
-	using MatchFunction = std::function<bool (Painter::MatchData&)>;
+	using MatchFunction = std::function<bool (MatchData&)>;
 
-	CustomRule(MatchFunction matcher, const ColorString& color);
+	CustomRule(MatchFunction matcher, const ColorString& color, StopCondition* condition = nullptr);
 
 
 	MatchFunction matcher = nullptr;
 
 private:
-	bool token_match(Painter::MatchData& data) noexcept override;
+	bool token_match(MatchData& data) noexcept override;
 };
 
 

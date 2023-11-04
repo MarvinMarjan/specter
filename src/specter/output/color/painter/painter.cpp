@@ -2,8 +2,11 @@
 
 #include <sstream>
 
-#include <specter/output/ostream.h>
 #include <specter/input/istream.h>
+#include <specter/output/color/painter/stop_condition.h>
+#include <specter/output/color/painter/match_data.h>
+
+#include <specter/output/ostream.h>
 
 
 
@@ -13,10 +16,14 @@ SPECTER_NAMESPACE Painter::Painter(const Cursor* cursor)
 
 SPECTER_NAMESPACE Painter::~Painter()
 {
-	for (const PaintRule* rule : rules_)
-		if (rule)
-			delete rule;
+	for (size_t i = 0; i < rules_.size(); i++)
+		if (rules_[i])
+		{
+			delete rules_[i];
+			rules_[i] = nullptr;
+		}
 }
+
 
 
 std::string SPECTER_NAMESPACE Painter::paint(const std::string& source) noexcept
@@ -42,23 +49,24 @@ std::string SPECTER_NAMESPACE Painter::paint(const std::string& source) noexcept
 
 	std::stringstream stream;
 	Token token;
+	size_t index;
 
-	Painter::MatchData data(token, cursor_);
+	MatchData data(token, index, cursor_);
+	data.tokens = tokens;
 
-	
+	// update first token
+	data.update();	
+
 	// iterate through all tokens and match them
-	for (size_t i = 0; i < tokens.size(); i++)
+	while (!data.end_reached)
 	{
-		data.last_token = (i + 1 >= tokens.size());
-
-		token = tokens[i];
-		data.raw_token = token;
-
 		// match the current token with all rules
 		match_rules(data);
 
-		
 		stream << token.source;
+		
+		// advances to the next token
+		data.next();
 	}
 
 
@@ -71,7 +79,7 @@ std::string SPECTER_NAMESPACE Painter::paint(const std::string& source) noexcept
 
 
 
-void SPECTER_NAMESPACE Painter::match_rules(Painter::MatchData& data) noexcept
+void SPECTER_NAMESPACE Painter::match_rules(MatchData& data) noexcept
 {
 	for (size_t i = 0; i < rules_.size(); i++)
 	{
@@ -86,6 +94,7 @@ void SPECTER_NAMESPACE Painter::match_rules(Painter::MatchData& data) noexcept
 
 		// is at last rule iteration?
 		data.last_rule = (i + 1 >= rules_.size());
+		data.current_rule = rule;
 
 		// rule has matched, do not match others
 		if (rule->match(data))
@@ -96,15 +105,25 @@ void SPECTER_NAMESPACE Painter::match_rules(Painter::MatchData& data) noexcept
 
 
 
-SPECTER_NAMESPACE PaintRule::PaintRule(const ColorString& color)
+SPECTER_NAMESPACE PaintRule::PaintRule(const ColorString& color, StopCondition* condition)
 {
 	this->color = color;
+	m_stop_condition = condition;
+}
+
+SPECTER_NAMESPACE PaintRule::~PaintRule()
+{
+	if (!m_stop_condition)
+		return;
+		
+	delete m_stop_condition;
+	m_stop_condition = nullptr;
 }
 
 
 
 
-bool SPECTER_NAMESPACE PaintRule::match(Painter::MatchData& data) noexcept
+bool SPECTER_NAMESPACE PaintRule::match(MatchData& data) noexcept
 {
 	std::stringstream stream;
 
@@ -125,28 +144,50 @@ bool SPECTER_NAMESPACE PaintRule::match(Painter::MatchData& data) noexcept
 	// modify token
 	data.token.source = stream.str();
 
+	if (m_stop_condition)
+		m_stop_condition->reload();
+	
 	return true;
 }
 
 
 
-void SPECTER_NAMESPACE PaintRule::paint_token(std::stringstream& stream, Painter::MatchData& data, const bool draw_cursor) const noexcept
+void SPECTER_NAMESPACE PaintRule::paint_token(std::stringstream& stream, MatchData& data, const bool draw_cursor) const noexcept
 {
 	// paints the token and draws the cursor
 	if (draw_cursor)
 	{
 		paint_and_draw_cursor(stream, data);
 		data.cursor_drawn = true;
-		return;
 	}
 
 	// no need to draw the cursor, just paint the token
-	stream << color.get() << data.token.source << RESET_ALL;
+	else
+		stream << color.get() << data.token.source << RESET_ALL;
+
+	process_stop_condition(stream, data);
 }
 
 
 
-void SPECTER_NAMESPACE PaintRule::paint_and_draw_cursor(std::stringstream& stream, const Painter::MatchData& data) const noexcept
+void SPECTER_NAMESPACE PaintRule::process_stop_condition(std::stringstream& stream, MatchData& data) const noexcept
+{
+	if ((!m_stop_condition || m_stop_condition->stop()) && !data.offset)
+		return;
+
+	if (m_stop_condition)
+		m_stop_condition->process(data);
+
+	if (data.offset)
+		data.offset--;
+	
+	data.next();
+	paint_token(stream, data, cursor_in_token(data));
+}
+
+
+
+void SPECTER_NAMESPACE PaintRule::paint_and_draw_cursor(std::stringstream& stream, const MatchData& data) const noexcept
 {
 	const Cursor* cursor = data.cursor;
 
@@ -189,7 +230,7 @@ void SPECTER_NAMESPACE PaintRule::paint_and_draw_cursor(std::stringstream& strea
 
 
 
-void SPECTER_NAMESPACE PaintRule::paint_token_char_by_char(std::stringstream& stream, const Painter::MatchData& data, const std::string& token_color) const noexcept
+void SPECTER_NAMESPACE PaintRule::paint_token_char_by_char(std::stringstream& stream, const MatchData& data, const std::string& token_color) const noexcept
 {
 	const Cursor* cursor = data.cursor;
 
@@ -217,7 +258,7 @@ void SPECTER_NAMESPACE PaintRule::paint_token_char_by_char(std::stringstream& st
 
 
 
-bool SPECTER_NAMESPACE PaintRule::draw_cursor_if_at_last_rule(const Painter::MatchData& data) noexcept
+bool SPECTER_NAMESPACE PaintRule::draw_cursor_if_at_last_rule(const MatchData& data) noexcept
 {
 	// not at last rule iteration. return
 	if (!data.last_rule)
@@ -232,7 +273,7 @@ bool SPECTER_NAMESPACE PaintRule::draw_cursor_if_at_last_rule(const Painter::Mat
 
 
 
-bool SPECTER_NAMESPACE PaintRule::cursor_in_token(const Painter::MatchData& data) noexcept
+bool SPECTER_NAMESPACE PaintRule::cursor_in_token(const MatchData& data) noexcept
 {
 	// nullptr cursor. return false
 	if (!data.cursor)
@@ -270,5 +311,5 @@ bool SPECTER_NAMESPACE PaintRule::cursor_in_token(const Painter::MatchData& data
 	// swaping "cursor_index >= data.begin" to use ">" and "cursor_index < data.end" to use "<="
 	// would also work
 
-	return (!data.cursor_drawn && cursor_index >= data.raw_token.begin && cursor_index < data.raw_token.begin);
+	return (!data.cursor_drawn && cursor_index >= data.raw_token.begin && cursor_index < data.raw_token.end);
 }
