@@ -70,6 +70,8 @@ protected:
 
 
 	bool match(MatchData& data) noexcept;
+
+	// paints a token and draws the cursor on it if available
 	void paint_token(std::stringstream& stream, MatchData& data, const bool draw_cursor = false) const noexcept;
 
 	
@@ -93,7 +95,7 @@ protected:
 
 
 	// draws the cursor if it is at last rule iteration.
-	static bool draw_cursor_if_at_last_rule(const MatchData& data) noexcept;
+	static bool draw_cursor_if_at_last_rule(MatchData& data) noexcept;
 	
 	// cursor is in "data.token"?
 	static bool cursor_in_token(const MatchData& data) noexcept;

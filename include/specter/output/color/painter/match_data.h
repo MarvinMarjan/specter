@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <specter/macro.h>
+#include <specter/output/color/painter/token_scanner.h>
 
 
 
@@ -10,20 +10,20 @@ SPECTER_NAMESPACE_BEGIN
 
 
 class Cursor;
-class Token;
 class PaintRule;
 
 
 class MatchData
 {
 public:
-	MatchData(Token& token, size_t index, const Cursor* cursor)
-		: raw_token(token), token(token), index_(index), cursor(cursor)
-	{}
+	MatchData(const std::vector<Token>& tokens, const Cursor* cursor)
+		: tokens(tokens), cursor(cursor)
+	{
+		update_all();
+	}
 
 
 	void next() noexcept;
-	void update() noexcept;
 
 
 	std::vector<Token> tokens;
@@ -32,14 +32,16 @@ public:
 	size_t index() const noexcept { return index_; }
 
 
-	const Token&	raw_token;	// raw token (modifications are not allowed)
-	Token&			token;		// token
+	Token token;
 
 
 	// a cursor pointer. necessary if you want to have a Cursor drawn and 
 	// a painting of Painter object in the same string without getting conflicts
 	// or a weird result
 	const Cursor* cursor;
+
+	size_t relative_cursor_index()	const noexcept { return relative_cursor_index_; }
+	size_t cursor_index()			const noexcept { return cursor_index_; }
 
 
 	// if not nullptr, tokens will always be matched with this rule
@@ -67,7 +69,22 @@ private:
 	friend class Matcher;
 
 
-	size_t& index_;
+	// update rule data variable members and return the right rule
+	PaintRule* update_rule_data(const std::vector<PaintRule*>& rules, const size_t current_index) noexcept;
+
+	void update_all() noexcept;
+
+	void update_token_data()	noexcept;
+	void update_cursor_data()	noexcept;
+
+
+	size_t index_ = 0;
+
+
+	size_t cursor_index_;
+	
+	// cursor index relative to token (0 means the first token character)
+	size_t relative_cursor_index_;
 
 
 	PaintRule* current_rule_ = nullptr;
