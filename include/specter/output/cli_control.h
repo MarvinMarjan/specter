@@ -2,6 +2,8 @@
 
 #include <specter/output/escape.h>
 
+#include <specter/string.h>
+
 
 
 SPECTER_NAMESPACE_BEGIN
