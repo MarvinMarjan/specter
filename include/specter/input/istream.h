@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <specter/macro.h>
 
@@ -196,7 +197,8 @@ public:
 	Cursor() = default;
 
 
-	void reload() noexcept;
+	void reload()		noexcept;
+	void check_limit()	noexcept;
 
 
 	// draw this cursor into a string
@@ -213,6 +215,50 @@ public:
 	CursorStyle style;
 
 	bool active = true;
+};
+
+
+
+// stores data into a vector
+class InputBuffer : std::vector<std::string>
+{
+public:
+	using std::vector<std::string>::size;
+
+
+	InputBuffer() = default;
+
+	// adds an item to buffer. if it is already stored
+	// moves it to the last position
+	void add(const std::string& input) noexcept;
+
+	// gets an item at index
+	std::string get_at_index(const size_t index)	const noexcept { return ((empty()) ? std::string() : at(index)); }
+	
+	// uses built-in object index
+	std::string get_at_index()						const noexcept { return ((empty()) ? std::string() : at(index_)); }
+
+
+	// return the current index
+	size_t index() const noexcept { return index_; }
+
+
+	// reset index
+	void reset() noexcept;
+
+
+	void increase(const int amount = 1) noexcept; // increase index
+	void decrease(const int amount = 1) noexcept; // decrease index
+	
+
+private:
+
+	// moves an element at position to the last position
+	void move_to_end(const const_iterator& it) noexcept;
+
+
+	size_t index_ = 0;
+	bool first_interation_ = true;	// do not increase o decrease index if this is true
 };
 
 
@@ -243,6 +289,7 @@ protected:
 
 	std::string m_data;
 	Cursor m_cursor;
+	InputBuffer m_buffer;
 };
 
 
