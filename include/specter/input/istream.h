@@ -212,6 +212,7 @@ public:
 	CursorPos pos;
 	CursorStyle style;
 
+	bool active = true;
 };
 
 
@@ -231,7 +232,13 @@ protected:
 	virtual bool process(const char ch) noexcept = 0;
 	virtual void process_sub(const char ch) noexcept = 0;
 
-	virtual std::string format() noexcept = 0;;
+	virtual std::string format() noexcept = 0;
+
+
+	void print_data_without_cursor() noexcept;
+
+
+	static void clear_input() noexcept;
 
 
 	std::string m_data;
@@ -260,9 +267,6 @@ private:
 
 	// return the current input data to be printed to the screen
 	std::string format() noexcept override;
-
-
-	static void clear_input() noexcept;
 };
 
 

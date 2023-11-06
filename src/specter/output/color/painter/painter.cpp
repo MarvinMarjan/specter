@@ -65,6 +65,8 @@ std::string SPECTER_NAMESPACE Painter::paint(const std::string& source) noexcept
 		data.next();
 	}
 
+	stream << RESET_ALL;
+
 	// reload all rules
 	for (PaintRule* rule : rules_)
 		if (rule)

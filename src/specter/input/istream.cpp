@@ -17,21 +17,15 @@ void SPECTER_NAMESPACE Cursor::reload() noexcept
 
 void SPECTER_NAMESPACE Cursor::draw(std::string& source) const noexcept
 {
-	// check if cursor index is beyond source last character
-	if (pos.index >= source.size())
-	{
-		draw_at_end(source);
-		return;
-	}
-
-	// draw the cursor
-	source.insert(pos.index + 1, RESET_ALL);
-	source.insert(pos.index, style.color);
+	draw(source, pos.index);
 }
 
 
 void SPECTER_NAMESPACE Cursor::draw(std::string& source, const size_t index) const noexcept
 {
+	if (!active)
+		return;
+
 	// check if cursor index is beyond source last character
 	if (index >= source.size())
 	{
@@ -47,6 +41,9 @@ void SPECTER_NAMESPACE Cursor::draw(std::string& source, const size_t index) con
 
 std::string SPECTER_NAMESPACE Cursor::at_end() const noexcept
 {
+	if (!active)
+		return "";
+
 	std::string at_end_str = "";
 	
 	at_end_str += style.color;
@@ -55,6 +52,28 @@ std::string SPECTER_NAMESPACE Cursor::at_end() const noexcept
 
 	return at_end_str;
 }
+
+
+
+
+
+void SPECTER_NAMESPACE Istream::print_data_without_cursor() noexcept
+{
+	m_cursor.active = false;
+
+	clear_input();
+	print(format());
+	
+	m_cursor.active = true;
+} 
+
+
+void SPECTER_NAMESPACE Istream::clear_input() noexcept
+{
+	print(load_cursor_pos());
+	print(erase_screen(FromCursorToEnd));
+}
+
 
 
 
@@ -105,6 +124,8 @@ std::string SPECTER_NAMESPACE StdIstream::read()
 		// prints the data
 		print(format());
 	}
+
+	print_data_without_cursor();
 
 	// restore default terminal attributes
 	set_default_stdin_tcattr();
@@ -175,12 +196,4 @@ std::string SPECTER_NAMESPACE StdIstream::format() noexcept
 	m_cursor.draw(formatted);
 	
 	return formatted;
-}
-
-
-
-void SPECTER_NAMESPACE StdIstream::clear_input() noexcept
-{
-	print(load_cursor_pos());
-	print(erase_screen(FromCursorToEnd));
 }
