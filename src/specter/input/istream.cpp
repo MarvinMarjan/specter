@@ -1,5 +1,7 @@
 #include <specter/input/istream.h>
 
+#include <algorithm>
+
 #include <specter/output/color/color.h>
 #include <specter/output/ostream.h>
 #include <specter/output/cli_control.h>
@@ -11,6 +13,13 @@ void SPECTER_NAMESPACE Cursor::reload() noexcept
 {
 	pos.index = 0;
 	pos.limit = 0;
+}
+
+
+void SPECTER_NAMESPACE Cursor::check_limit() noexcept
+{
+	if (pos.index > pos.limit)
+		pos.index = pos.limit;
 }
 
 
@@ -53,6 +62,85 @@ std::string SPECTER_NAMESPACE Cursor::at_end() const noexcept
 	return at_end_str;
 }
 
+
+
+
+void SPECTER_NAMESPACE InputBuffer::add(const std::string& input) noexcept
+{	
+	// do not add empty values
+	if (input.empty())
+		return;
+
+	const_iterator it;
+
+	// input already exists in buffer?
+	if ((it = std::find(cbegin(), cend(), input)) != cend())
+	{
+		// move it to end
+		move_to_end(it);
+		return;
+	}
+
+	// add input
+	push_back(input);
+	index_++;
+
+	if (size() == 1)
+		index_ = 0;
+}
+
+
+void SPECTER_NAMESPACE InputBuffer::move_to_end(const const_iterator& it) noexcept
+{
+	const std::string value = *it;
+	erase(it);
+	push_back(value);
+}
+
+
+
+void SPECTER_NAMESPACE InputBuffer::reset() noexcept
+{
+	first_interation_ = true;
+
+	if (empty())
+	{
+		index_ = 0;
+		return;
+	}
+
+	index_ = size() - 1;
+}
+
+
+void SPECTER_NAMESPACE InputBuffer::increase(const int amount) noexcept
+{
+	if (first_interation_)
+	{
+		first_interation_ = false;
+		return;
+	}
+
+	if ((int)index_ + amount >= size())
+		return;
+
+	index_ += amount;
+}
+
+
+void SPECTER_NAMESPACE InputBuffer::decrease(const int amount) noexcept
+{
+	if (first_interation_)
+	{
+		first_interation_ = false;
+		return;
+	}
+
+	if ((int)index_ - amount < 0)
+		return;
+
+	index_ -= amount;
+}
 
 
 
@@ -99,6 +187,9 @@ std::string SPECTER_NAMESPACE StdIstream::read()
 	// reload the cursor
 	m_cursor.reload();
 
+	// reset buffer index
+	m_buffer.reset();
+
 	char ch = '\0';
 	int ch_code = 0;
 	
@@ -117,6 +208,7 @@ std::string SPECTER_NAMESPACE StdIstream::read()
 
 		// update the cursor limit to the input size
 		m_cursor.pos.limit = m_data.size();
+		m_cursor.check_limit();
 
 		// loads the saved cursor pos and update the screen
 		clear_input();
@@ -124,6 +216,9 @@ std::string SPECTER_NAMESPACE StdIstream::read()
 		// prints the data
 		print(format());
 	}
+
+	// add input to buffer
+	m_buffer.add(m_data);
 
 	// prints the data a last time but without
 	// the cursor
@@ -164,6 +259,8 @@ bool SPECTER_NAMESPACE StdIstream::process(const char ch) noexcept
 		return true;
 	}
 
+	m_buffer.reset();
+
 	return false;
 }
 
@@ -174,9 +271,13 @@ void SPECTER_NAMESPACE StdIstream::process_sub(const char ch) noexcept
 	switch ((int)ch)
 	{
 	case (int)EscCode::up_arrow:
+		m_buffer.decrease();
+		m_data = m_buffer.get_at_index();
 		break;
 	
 	case (int)EscCode::down_arrow:
+		m_buffer.increase();
+		m_data = m_buffer.get_at_index();
 		break;
 
 	case (int)EscCode::left_arrow:
