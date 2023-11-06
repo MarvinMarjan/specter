@@ -10,6 +10,7 @@
 void SPECTER_NAMESPACE Cursor::reload() noexcept
 {
 	pos.index = 0;
+	pos.limit = 0;
 }
 
 
