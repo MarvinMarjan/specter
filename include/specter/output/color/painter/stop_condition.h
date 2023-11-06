@@ -55,7 +55,7 @@ public:
 		: token_(token) {}
 
 
-	bool stop()		const noexcept override { return current_ == token_; }
+	bool stop() const noexcept override { return current_ == token_; }
 
 	void process(MatchData& data) noexcept override { current_ = data.token.source; }
 

@@ -133,7 +133,7 @@ bool SPECTER_NAMESPACE PaintRule::match(MatchData& data) noexcept
 	paint_token(stream, data, is_cursor_in_token);
 
 	// modify token.
-	// only modify at end to avoid disturbing 
+	// only modify it at end to avoid disturbing 
 	// other functions that need it raw
 	data.token.source = stream.str();
 
@@ -167,7 +167,7 @@ void SPECTER_NAMESPACE PaintRule::paint_token(std::stringstream& stream, MatchDa
 
 void SPECTER_NAMESPACE PaintRule::process_stop_condition(std::stringstream& stream, MatchData& data) const noexcept
 {
-	const bool should_stop = (!m_stop_condition || m_stop_condition->stop());
+	const bool should_stop = (!m_stop_condition || m_stop_condition->stop() || data.last_token()); 
 	const bool zero_offset = !data.offset_;
 
 	if (should_stop && zero_offset)
