@@ -125,6 +125,8 @@ std::string SPECTER_NAMESPACE StdIstream::read()
 		print(format());
 	}
 
+	// prints the data a last time but without
+	// the cursor
 	print_data_without_cursor();
 
 	// restore default terminal attributes

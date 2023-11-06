@@ -6,7 +6,7 @@
 
 
 // get the terminal control attributes from "fd" (i.e: STDIN_FILENO)
-inline static termios get_tcattr(const int fd) noexcept
+inline termios get_tcattr(const int fd) noexcept
 {
 	struct termios tcattr;
 
@@ -18,13 +18,13 @@ inline static termios get_tcattr(const int fd) noexcept
 
 
 // adds attributes to a terminal control flag
-inline static void add_tcflag_value(tcflag_t& flag, const int value) noexcept
+inline void add_tcflag_value(tcflag_t& flag, const int value) noexcept
 {
 	flag |= value;
 }
 
 // removes attributes from a terminal control flag
-inline static void rmv_tcflag_value(tcflag_t& flag, const int value) noexcept
+inline void rmv_tcflag_value(tcflag_t& flag, const int value) noexcept
 {
 	flag &= ~value;
 }
@@ -32,7 +32,7 @@ inline static void rmv_tcflag_value(tcflag_t& flag, const int value) noexcept
 
 
 // set attributes to "fd" file descriptor
-inline static void set_tcattr(const int fd, const termios& attr) noexcept
+inline void set_tcattr(const int fd, const termios& attr) noexcept
 {
 	tcsetattr(fd, TCSANOW, &attr);
 }
@@ -43,7 +43,7 @@ inline static void set_tcattr(const int fd, const termios& attr) noexcept
 const termios default_stdin_tcattr = get_tcattr(STDIN_FILENO);
 
 
-inline static void set_default_stdin_tcattr() noexcept
+inline void set_default_stdin_tcattr() noexcept
 {
 	set_tcattr(STDIN_FILENO, default_stdin_tcattr);
 }
@@ -53,7 +53,7 @@ inline static void set_default_stdin_tcattr() noexcept
 // enables the continuous character input.
 // the character pressed will be emited immediately,
 // no need to press "enter"
-inline static void enable_continuous_input() noexcept
+inline void enable_continuous_input() noexcept
 {
 	termios tcattr = get_tcattr(STDIN_FILENO);			// get the current stdin attributes
 	rmv_tcflag_value(tcattr.c_lflag, ICANON | ECHO);	// remove the necessary attributes
