@@ -196,10 +196,12 @@ public:
 	Cursor() = default;
 
 
+	void reload() noexcept;
+
+
 	// draw this cursor into a string
 	void draw(std::string& source)						const noexcept;
 	void draw(std::string& source, const size_t index)	const noexcept;
-
 
 	void draw_at_end(std::string& source) const noexcept { source += at_end(); }
 

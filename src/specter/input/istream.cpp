@@ -7,6 +7,13 @@
 
 
 
+void SPECTER_NAMESPACE Cursor::reload() noexcept
+{
+	pos.index = 0;
+}
+
+
+
 void SPECTER_NAMESPACE Cursor::draw(std::string& source) const noexcept
 {
 	// check if cursor index is beyond source last character
@@ -68,6 +75,9 @@ std::string SPECTER_NAMESPACE StdIstream::read()
 
 	// clear previous data
 	m_data.clear();
+
+	// reload the cursor
+	m_cursor.reload();
 
 	char ch = '\0';
 	int ch_code = 0;
