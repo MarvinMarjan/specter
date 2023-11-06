@@ -115,7 +115,7 @@ void SPECTER_NAMESPACE InputBuffer::reset() noexcept
 
 void SPECTER_NAMESPACE InputBuffer::increase(const int amount) noexcept
 {
-	if (first_interation_)
+	if (first_interation_)	
 	{
 		first_interation_ = false;
 		return;
