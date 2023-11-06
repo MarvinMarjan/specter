@@ -1,6 +1,5 @@
 #pragma once
 
-#include <specter/string.h>
 #include <specter/output/escape.h>
 
 

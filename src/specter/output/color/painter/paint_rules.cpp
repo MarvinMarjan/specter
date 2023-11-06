@@ -1,7 +1,5 @@
 #include <specter/output/color/painter/paint_rules.h>
 
-#include <algorithm>
-
 #include <specter/output/color/painter/match_data.h>
 
 

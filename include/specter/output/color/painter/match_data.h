@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 #include <specter/output/color/painter/token_scanner.h>
 
 
