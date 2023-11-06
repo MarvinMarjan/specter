@@ -273,11 +273,13 @@ void SPECTER_NAMESPACE StdIstream::process_sub(const char ch) noexcept
 	case (int)EscCode::up_arrow:
 		m_buffer.decrease();
 		m_data = m_buffer.get_at_index();
+		m_cursor.pos.index = m_data.size();
 		break;
 	
 	case (int)EscCode::down_arrow:
 		m_buffer.increase();
 		m_data = m_buffer.get_at_index();
+		m_cursor.pos.index = m_data.size();
 		break;
 
 	case (int)EscCode::left_arrow:
