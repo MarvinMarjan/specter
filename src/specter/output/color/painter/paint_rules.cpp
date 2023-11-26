@@ -39,14 +39,7 @@ std::vector<SPECTER_NAMESPACE Matcher> SPECTER_NAMESPACE Matcher::matchers_from_
 	std::vector<Matcher> matchers;
 
 	for (const std::string& item : list)
-	{
-		Matcher match;
-
-		for (const char ch : item)
-			match.add_matcher(chstr(ch));
-
-		matchers.push_back(match);
-	}
+		matchers.push_back(item);
 
 
 	return matchers;
