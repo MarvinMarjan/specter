@@ -17,11 +17,22 @@ class MatchData;
 class Matcher
 {
 public:
+	Matcher() = default;
 	Matcher(const std::string& token);
 	Matcher(const std::initializer_list<std::string>& tokens);
 
 
 	bool match(MatchData& data) const noexcept;
+
+
+	void add_matcher(const std::string& matcher) noexcept { matcher_.push_back(matcher); }
+	void remove_last() noexcept { matcher_.erase(matcher_.cend()); }
+
+	std::vector<std::string> matcher() const noexcept { return matcher_; }
+
+
+	// takes a string list and returns a Matcher list
+	static std::vector<Matcher> matchers_from_string_list(const std::vector<std::string>& list) noexcept;
 
 
 private:

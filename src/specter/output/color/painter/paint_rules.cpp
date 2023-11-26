@@ -34,6 +34,26 @@ bool SPECTER_NAMESPACE Matcher::match(MatchData& data) const noexcept
 
 
 
+std::vector<SPECTER_NAMESPACE Matcher> SPECTER_NAMESPACE Matcher::matchers_from_string_list(const std::vector<std::string>& list) noexcept
+{
+	std::vector<Matcher> matchers;
+
+	for (const std::string& item : list)
+	{
+		Matcher match;
+
+		for (const char ch : item)
+			match.add_matcher(chstr(ch));
+
+		matchers.push_back(match);
+	}
+
+
+	return matchers;
+}
+
+
+
 
 SPECTER_NAMESPACE MatcherRule::MatcherRule(const std::initializer_list<Matcher>& matchers, const ColorString& color, StopCondition* condition)
 	: PaintRule(color, condition), matchers(matchers)
