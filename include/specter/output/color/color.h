@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdint>
-
 #include <specter/string.h>
 #include <specter/output/escape.h>
 
@@ -65,16 +63,16 @@ enum ModeIndex
 struct RGB
 {
 	RGB() = default;
-	RGB(const uint8_t r, const uint8_t g, const uint8_t b)
+	RGB(const int r, const int g, const int b)
 		: red(r), green(g), blue(b) {}
 
-	RGB(const uint8_t all)
+	RGB(const int all)
 		: red(all), green(all), blue(all) {}
 
-
-	uint8_t red		= 0;
-	uint8_t green	= 0;
-	uint8_t blue	= 0;
+	
+	int red		= -1;
+	int green	= -1;
+	int blue	= -1;
 };
 
 

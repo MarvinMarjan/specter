@@ -32,8 +32,8 @@ struct ColorStruct
 		: foreground(foreground), background(background), mode(mode) {}
 
 
-	_ColorTy foreground {0};
-	_ColorTy background {0};
+	_ColorTy foreground {-1};
+	_ColorTy background {-1};
 
 	ModeIndex mode = normal;
 };
