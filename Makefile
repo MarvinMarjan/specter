@@ -4,10 +4,7 @@ RELEASE_PATH = $(BUILD_PATH)/release
 
 LIB_PATH = lib
 
-
-
 # define RELEASE to build with release configuration, debug will be used otherwise
-
 ifdef RELEASE
 	OPTIMIZATION = -O3
 	OUT_PATH = $(RELEASE_PATH)
@@ -18,26 +15,21 @@ else
 	LIB_NAME = specter_d
 endif
 
-
-
 CC = g++
-CVERSION = c++20
+CPP_VERSION = --std=c++20
 
 OUT_NAME = lib$(LIB_NAME).a
-
-OUT_LIB = $(LIB_PATH)/$(OUT_NAME)
+OUT_LIB_PATH = $(LIB_PATH)/$(OUT_NAME)
 
 TEST_PATH = test
 TEST_FILE = $(TEST_PATH)/main.cpp
 TEST_APP_NAME = test
 TEST_APP_PATH = $(TEST_PATH)/$(TEST_APP_NAME)
-
+TEST_LIBS = -lspecter_d -ltinfo
 
 INCLUDE_PATH = ./include
 
-
-TEST_LIBS = -lspecter_d -ltinfo
-
+CPP_COMPILE_FLAGS = -I$(INCLUDE_PATH) $(OPTIMIZATION) $(CPP_VERSION)
 
 SOURCES = $(shell find src -name "*.cpp")
 OBJECTS = $(SOURCES:.cpp=.o)
@@ -60,28 +52,23 @@ run:
 	@ $(TEST_APP_PATH)
 
 
-
-$(TEST_APP_PATH): $(TEST_FILE) $(OUT_LIB)
+$(TEST_APP_PATH): $(TEST_FILE) $(OUT_LIB_PATH)
 	@ echo Compiling test with library $(LIB_NAME)
-	@ $(CC) $< -o $(TEST_APP_PATH) -I$(INCLUDE_PATH) -L$(LIB_PATH) $(TEST_LIBS) --std=$(CVERSION)
-
+	@ $(CC) $< -o $(TEST_APP_PATH)
 
 
 # links object files into a executable
 .PHONY:
-$(OUT_LIB) build: $(OBJECTS)
+$(OUT_LIB_PATH) build: $(OBJECTS)
 	@ echo Linking objects: $(FULL_OBJECTS)
-	@ ar rcs $(OUT_LIB) $(FULL_OBJECTS)
-	@ echo Library created at $(OUT_LIB)
-
-
+	@ ar rcs $(OUT_LIB_PATH) $(FULL_OBJECTS)
+	@ echo Library created at $(OUT_LIB_PATH)
 
 
 # compiles source files into objects
 $(OBJECTS): %.o: %.cpp
 	@ echo Compiling $<
-	@ $(CC) -c $< -o $(addprefix $(OUT_PATH)/, $(notdir $@)) $(OPTIMIZATION) -I $(INCLUDE_PATH) --std=$(CVERSION)
-
+	@ $(CC) -c $< -o $(addprefix $(OUT_PATH)/, $(notdir $@)) $(CPP_COMPILE_FLAGS)
 
 
 # cleans up build folder
