@@ -11,8 +11,9 @@ SPECTER_NAMESPACE_BEGIN
 // basic color index. foreground and background
 enum ColorIndex
 {
-	reset_color = 0, // reset color only
+    invalid = -1,
 
+	reset_color = 0, // reset color only
 
 	// normal
 

@@ -59,8 +59,8 @@ struct ColorStruct<ColorIndex>
 		: foreground(foreground), background(background), mode(mode) {}
 
 
-	ColorIndex foreground = fg_default;
-	ColorIndex background = bg_default;
+	ColorIndex foreground = invalid;
+	ColorIndex background = invalid;
 
 	ModeIndex mode = normal;
 };
