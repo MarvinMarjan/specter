@@ -2,6 +2,8 @@
 
 #include <sstream>
 
+#include <specter/output/ostream.h>
+
 
 
 std::string SPECTER_NAMESPACE clr(const std::string& source, const std::initializer_list<int>& codes) noexcept
@@ -22,7 +24,7 @@ std::string SPECTER_NAMESPACE clr(const std::initializer_list<int>& codes) noexc
 			continue;
 
 		const bool is_at_end = it + 1 == codes.end();
-		const bool is_next_invalid = !is_at_end && *(it + 1) < 0;
+		const bool is_next_invalid = is_at_end || *(it + 1) < 0;
 
 		stream << *it << ((!is_next_invalid) ? ";" : "");
 	}
