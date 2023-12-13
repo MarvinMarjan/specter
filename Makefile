@@ -21,15 +21,9 @@ CPP_VERSION = --std=c++20
 OUT_NAME = lib$(LIB_NAME).a
 OUT_LIB_PATH = $(LIB_PATH)/$(OUT_NAME)
 
-TEST_PATH = test
-TEST_FILE = $(TEST_PATH)/main.cpp
-TEST_APP_NAME = test
-TEST_APP_PATH = $(TEST_PATH)/$(TEST_APP_NAME)
-TEST_LIBS = -lspecter_d -ltinfo
+INCLUDE_PATH = -Iinclude
 
-INCLUDE_PATH = ./include
-
-CPP_COMPILE_FLAGS = -I$(INCLUDE_PATH) $(OPTIMIZATION) $(CPP_VERSION)
+CPP_COMPILE_FLAGS = $(INCLUDE_PATH) $(OPTIMIZATION) $(CPP_VERSION)
 
 SOURCES = $(shell find src -name "*.cpp")
 OBJECTS = $(SOURCES:.cpp=.o)
@@ -37,24 +31,11 @@ OBJECTS = $(SOURCES:.cpp=.o)
 FULL_OBJECTS = $(addprefix $(OUT_PATH)/, $(notdir $(OBJECTS)))
 
 
-
 .PHONY:
-testc: $(TEST_APP_PATH)
+run: $(OUT_LIB_PATH)
 	@ echo Running test...
 	@ echo
 	@ $(TEST_APP_PATH)
-
-
-.PHONY:
-run:
-	@ echo Running test...
-	@ echo
-	@ $(TEST_APP_PATH)
-
-
-$(TEST_APP_PATH): $(TEST_FILE) $(OUT_LIB_PATH)
-	@ echo Compiling test with library $(LIB_NAME)
-	@ $(CC) $< -o $(TEST_APP_PATH)
 
 
 # links object files into a executable
